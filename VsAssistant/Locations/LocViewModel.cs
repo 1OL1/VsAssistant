@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using VsAssistant.Data;
 
 namespace VsAssistant.Locations
 {
@@ -62,7 +63,7 @@ namespace VsAssistant.Locations
         #region Implementation
         private void ReloadData()
         {
-            var dataReader = new LocDataReader();
+            var dataReader = new LocationPageReader();
             dataReader.ReadData();
 
             caveNextAttack = dataReader.CaveNextAttack;

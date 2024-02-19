@@ -10,7 +10,7 @@
             <VisualState Name="Normal">
                 <VisualState.Storyboard>
                     <Storyboard>
-                        <ColorAnimation To="Black" Storyboard.TargetProperty="Foreground.Color"/>
+                        <ColorAnimation To="Black" Storyboard.TargetProperty="Foreground.Color" Duration="0"/>
 
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.FontWeight)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -26,7 +26,13 @@
             <VisualState Name="Warning">
                 <VisualState.Storyboard>
                     <Storyboard>
-                        <ColorAnimation To="Orange" Storyboard.TargetProperty="Foreground.Color"/>
+                        <ColorAnimation To="DarkOrange" Storyboard.TargetProperty="Foreground.Color" Duration="0"/>
+
+                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" AutoReverse="True" Duration="0:0:0.25"  RepeatBehavior="5x">
+                            <DoubleAnimation.EasingFunction>
+                                <ElasticEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
 
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.FontWeight)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -69,7 +75,7 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.FontWeight)">
                             <DiscreteObjectKeyFrame KeyTime="0">
                                 <DiscreteObjectKeyFrame.Value>
-                                    <FontWeight>Bold</FontWeight>
+                                    <FontWeight>Normal</FontWeight>
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>
@@ -78,22 +84,4 @@
             </VisualState>
         </VisualStateGroup>
     </VisualStateManager.VisualStateGroups>
-    <!--<Style>
-        <Style.Resources>
-            <Storyboard x:Key="flashAnimation" >
-                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" AutoReverse="True" Duration="0:0:0.5" RepeatBehavior="Forever" />
-            </Storyboard>
-        </Style.Resources>
-
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding OptionInMoney}" Value="True">
-                <DataTrigger.EnterActions>
-                    <BeginStoryboard Name="flash" Storyboard="{StaticResource flashAnimation}" />
-                </DataTrigger.EnterActions>
-                <DataTrigger.ExitActions>
-                    <StopStoryboard BeginStoryboardName="flash"/>
-                </DataTrigger.ExitActions>
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>-->
-</Label>
+ </Label>

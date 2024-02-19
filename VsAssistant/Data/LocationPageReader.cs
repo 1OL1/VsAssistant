@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VsAssistant.Locations
+namespace VsAssistant.Data
 {
-    internal class LocDataReader
+    internal class LocationPageReader
     {
         private static readonly TimeZoneInfo serverTimeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
 
@@ -38,7 +38,7 @@ namespace VsAssistant.Locations
             var xPath = "/html/body/div/main/section[2]/aside/article/div[2]/div[1]/div/div/div[2]/text()[2]";
             var text = doc.DocumentNode.SelectSingleNode(xPath).InnerText;
 
-            text = text.Trim().Replace("в ", "");
+            text = text.Trim().Replace("в ", string.Empty);
 
             var date = DateTime.ParseExact(text, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
             date = date.AddMinutes(2);
@@ -51,7 +51,7 @@ namespace VsAssistant.Locations
             var xPath = "/html/body/div/main/section[2]/aside/article/div[2]/div[2]/div/div/div[2]/text()[2]";
             var text = doc.DocumentNode.SelectSingleNode(xPath).InnerText;
 
-            text = text.Trim().Replace("в ", "");
+            text = text.Trim().Replace("в ", string.Empty);
 
             var date = DateTime.ParseExact(text, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
             date = date.AddMinutes(2);
