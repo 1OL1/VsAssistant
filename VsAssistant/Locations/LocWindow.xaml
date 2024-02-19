@@ -21,10 +21,10 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Column="0" Grid.Row="0" Content="Пещера:" HorizontalAlignment="Right"/>
-        <Label Grid.Column="1" Grid.Row="0" Content="{Binding TimeToCave}" ContentStringFormat="{}{0:hh}:{0:mm}:{0:ss}"/>
+        <local:CavePortalLabel Grid.Column="1" Grid.Row="0" TimeToEvent="{Binding TimeToCave}"/>
 
         <Label Grid.Column="0" Grid.Row="1" Content="Портал:" HorizontalAlignment="Right"/>
-        <Label Grid.Column="1" Grid.Row="1" Content="{Binding TimeToPortal}" ContentStringFormat="{}{0:hh}:{0:mm}:{0:ss}"/>
+        <local:CavePortalLabel Grid.Column="1" Grid.Row="1" TimeToEvent="{Binding TimeToPortal}"/>
 
         <StackPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Orientation="Vertical">
             <Button Click="CloseButton_Click">X</Button>

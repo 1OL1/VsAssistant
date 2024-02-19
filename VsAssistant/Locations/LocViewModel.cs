@@ -40,7 +40,7 @@ namespace VsAssistant.Locations
             this.CalcTimes();
 
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMicroseconds(250);
+            timer.Interval = TimeSpan.FromMicroseconds(500);
             timer.Tick += Timer_Tick;
             timer.Start();
         }
@@ -48,7 +48,7 @@ namespace VsAssistant.Locations
         #region Event Handlers
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            if ((DateTime.Now - lastTimerReload) > TimeSpan.FromSeconds(10) && (this.TimeToCave >= TimeSpan.Zero || this.TimeToPortal <= TimeSpan.Zero)
+            if ((DateTime.Now - lastTimerReload) > TimeSpan.FromSeconds(10) && (this.TimeToCave <= TimeSpan.Zero || this.TimeToPortal <= TimeSpan.Zero)
                 || (DateTime.Now - lastTimerReload) > TimeSpan.FromMinutes(10))
             {
                 this.ReloadData();
@@ -71,8 +71,8 @@ namespace VsAssistant.Locations
 
         private void CalcTimes()
         {
-            this.TimeToCave = caveNextAttack - DateTime.Now > TimeSpan.Zero ? caveNextAttack - DateTime.Now : TimeSpan.Zero;
-            this.TimeToPortal = portalNextAttack - DateTime.Now > TimeSpan.Zero ? portalNextAttack - DateTime.Now : TimeSpan.Zero;
+            this.TimeToCave = caveNextAttack - DateTime.Now;
+            this.TimeToPortal = portalNextAttack - DateTime.Now;
         }
         #endregion
     }
