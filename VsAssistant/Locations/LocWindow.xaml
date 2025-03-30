@@ -18,17 +18,20 @@
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.Row="0" Content="Пещера:" HorizontalAlignment="Right"/>
-        <local:CavePortalLabel Grid.Column="1" Grid.Row="0" TimeToEvent="{Binding TimeToCave}"/>
+        <Label Grid.Column="0" Grid.Row="0" Content="Пещера:" HorizontalAlignment="Right" Padding="5 0 5 0" />
+        <local:CavePortalLabel Grid.Column="1" Grid.Row="0" TimeToEvent="{Binding TimeToCave}" Padding="0"/>
 
-        <Label Grid.Column="0" Grid.Row="1" Content="Портал:" HorizontalAlignment="Right"/>
-        <local:CavePortalLabel Grid.Column="1" Grid.Row="1" TimeToEvent="{Binding TimeToPortal}"/>
+        <Label Grid.Column="0" Grid.Row="1" Content="Портал:" HorizontalAlignment="Right" Padding="5 0 5 0"/>
+        <local:CavePortalLabel Grid.Column="1" Grid.Row="1" TimeToEvent="{Binding TimeToPortal}" Padding="0"/>
+
+        <Label Grid.Column="0" Grid.Row="2" Content="Ю.Блто:" HorizontalAlignment="Right" Padding="5 0 5 0"/>
+        <local:ResLocLabel Grid.Column="2" Grid.Row="1" Padding="0"/>
 
         <StackPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Orientation="Vertical">
             <Button Click="CloseButton_Click">X</Button>
-
         </StackPanel>
     </Grid>
 </Window>

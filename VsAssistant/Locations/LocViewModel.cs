@@ -49,8 +49,7 @@ namespace VsAssistant.Locations
         #region Event Handlers
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            if ((DateTime.Now - lastTimerReload) > TimeSpan.FromSeconds(10) && (this.TimeToCave <= TimeSpan.Zero || this.TimeToPortal <= TimeSpan.Zero)
-                || (DateTime.Now - lastTimerReload) > TimeSpan.FromMinutes(10))
+            if ((DateTime.Now - lastTimerReload) > TimeSpan.FromSeconds(20))
             {
                 this.ReloadData();
                 lastTimerReload = DateTime.Now;
@@ -68,7 +67,9 @@ namespace VsAssistant.Locations
 
             caveNextAttack = dataReader.CaveNextAttack;
             portalNextAttack = dataReader.PortalNextAttack;
-        }
+			dataReader.SoutSwamp.Status
+
+		}
 
         private void CalcTimes()
         {
