@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VsAssistant.Data;
 
 namespace VsAssistant.Locations
 {
@@ -20,9 +21,76 @@ namespace VsAssistant.Locations
     /// </summary>
     public partial class ResLocLabel : System.Windows.Controls.Label
     {
+        public ResLocationStatus Status
+        {
+            get { return (ResLocationStatus)GetValue(StatusProperty); }
+            set { SetValue(StatusProperty, value); }
+        }
+
+        public static readonly DependencyProperty StatusProperty =
+            DependencyProperty.Register("Status", typeof(ResLocationStatus), typeof(ResLocLabel), new PropertyMetadata(ResLocationStatus.Free, ValueChanged));
+
+        public TimeSpan? TimeToEvent
+        {
+            get { return (TimeSpan?)GetValue(TimeToEventProperty); }
+            set { SetValue(TimeToEventProperty, value); }
+        }
+
+        public static readonly DependencyProperty TimeToEventProperty =
+            DependencyProperty.Register("TimeToEvent", typeof(TimeSpan?), typeof(ResLocLabel), new PropertyMetadata(null, ValueChanged));
+
+        private static void ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ResLocLabel)d).UpdateView();
+        }
+
         public ResLocLabel()
         {
             InitializeComponent();
+            UpdateView();
+        }
+
+        private void UpdateView()
+        {
+            switch (Status)
+            {
+                case ResLocationStatus.Free:
+                    Content = "Свбна.";
+                    VisualStateManager.GoToElementState(this, "Free", false);
+                    break;
+
+                case ResLocationStatus.Battle:
+                    Content = "Битва";
+                    VisualStateManager.GoToElementState(this, "Battle", false);
+                    break;
+
+                case ResLocationStatus.Occupied when TimeToEvent.HasValue:
+                    var time = TimeToEvent.Value;
+                    Content = (time < TimeSpan.Zero ? "-" : string.Empty) + time.ToString(@"hh\:mm\:ss");
+
+                    if (time < TimeSpan.Zero)
+                    {
+                        VisualStateManager.GoToElementState(this, "AlertNoBlink", false);
+                    }
+                    else if (time < TimeSpan.FromMinutes(2))
+                    {
+                        VisualStateManager.GoToElementState(this, "Alert", false);
+                    }
+                    else if (time < TimeSpan.FromMinutes(15))
+                    {
+                        VisualStateManager.GoToElementState(this, "Warning", false);
+                    }
+                    else
+                    {
+                        VisualStateManager.GoToElementState(this, "Normal", false);
+                    }
+                    break;
+
+                default:
+                    Content = "Занята";
+                    VisualStateManager.GoToElementState(this, "Normal", false);
+                    break;
+            }
         }
     }
 }

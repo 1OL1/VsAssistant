@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VsAssistant.Data
 {
-    internal enum ResLocationStatus
+    public enum ResLocationStatus
     {
         Free,
         Occupied,

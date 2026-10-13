@@ -33,6 +33,16 @@ namespace VsAssistant.Locations
             get { return timeToPortal; }
             set { SetProperty(ref timeToPortal, value); }
         }
+
+        public ResLocViewModel FarForest { get; } = new ResLocViewModel();
+        public ResLocViewModel NearForest { get; } = new ResLocViewModel();
+        public ResLocViewModel NortSwamp { get; } = new ResLocViewModel();
+        public ResLocViewModel SoutSwamp { get; } = new ResLocViewModel();
+        public ResLocViewModel WestMine { get; } = new ResLocViewModel();
+        public ResLocViewModel NearMine { get; } = new ResLocViewModel();
+        public ResLocViewModel Lake { get; } = new ResLocViewModel();
+
+        private IEnumerable<ResLocViewModel> ResLocations => new[] { FarForest, NearForest, NortSwamp, SoutSwamp, WestMine, NearMine, Lake };
         #endregion
 
         public LocViewModel()
@@ -68,12 +78,24 @@ namespace VsAssistant.Locations
             caveNextAttack = dataReader.CaveNextAttack;
             portalNextAttack = dataReader.PortalNextAttack;
 
-		}
+            FarForest.Update(dataReader.FarForest);
+            NearForest.Update(dataReader.NearForest);
+            NortSwamp.Update(dataReader.NortSwamp);
+            SoutSwamp.Update(dataReader.SoutSwamp);
+            WestMine.Update(dataReader.WestMine);
+            NearMine.Update(dataReader.NearMine);
+            Lake.Update(dataReader.Lake);
+        }
 
         private void CalcTimes()
         {
             this.TimeToCave = caveNextAttack - DateTime.Now;
             this.TimeToPortal = portalNextAttack - DateTime.Now;
+
+            foreach (var resLocation in ResLocations)
+            {
+                resLocation.CalcTime();
+            }
         }
         #endregion
     }
