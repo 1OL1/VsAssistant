@@ -67,7 +67,6 @@ namespace VsAssistant.Locations
 
             caveNextAttack = dataReader.CaveNextAttack;
             portalNextAttack = dataReader.PortalNextAttack;
-			dataReader.SoutSwamp.Status
 
 		}
 

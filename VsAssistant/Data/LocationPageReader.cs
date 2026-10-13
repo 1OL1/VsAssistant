@@ -71,56 +71,56 @@ namespace VsAssistant.Data
 
         private void ReadFarForestData()
         {
-            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[1]/div/div/div[2]/div";
-            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[1]/div/div/div[2]/div[1]/text()[2]";
+            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[1]/div/div/div[3]/div";
+            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[1]/div/div/div[3]/div[1]/text()[2]";
 
             FarForest = ReadResLocInfo(statusPath, attackDatePath);
         }
 
         private void ReadNearForestData()
         {
-            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[2]/div/div/div[2]/div";
-            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[2]/div/div/div[2]/div[1]/text()[2]";
+            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[2]/div/div/div[3]/div";
+            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[2]/div/div/div[3]/div[1]/text()[2]";
 
             NearForest = ReadResLocInfo(statusPath, attackDatePath);
         }
 
         private void ReadNortSwampData()
         {
-            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[3]/div/div/div[2]/div";
-            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[3]/div/div/div[2]/div[1]/text()[2]";
+            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[3]/div/div/div[3]/div";
+            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[3]/div/div/div[3]/div[1]/text()[2]";
 
             NortSwamp = ReadResLocInfo(statusPath, attackDatePath);
         }
 
         private void ReadSoutSwampData()
         {
-            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[4]/div/div/div[2]/div";
-            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[4]/div/div/div[2]/div[1]/text()[2]";
+            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[4]/div/div/div[3]/div";
+            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[4]/div/div/div[3]/div[1]/text()[2]";
 
             SoutSwamp = ReadResLocInfo(statusPath, attackDatePath);
         }
 
         private void ReadWestMineData()
         {
-            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[5]/div/div/div[2]/div";
-            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[5]/div/div/div[2]/div[1]/text()[2]";
+            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[5]/div/div/div[3]/div";
+            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[5]/div/div/div[3]/div[1]/text()[2]";
 
             WestMine = ReadResLocInfo(statusPath, attackDatePath);
         }
 
         private void ReadNearMineData()
         {
-            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[6]/div/div/div[2]/div";
-            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[6]/div/div/div[2]/div[1]/text()[2]";
+            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[6]/div/div/div[3]/div";
+            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[6]/div/div/div[3]/div[1]/text()[2]";
 
             NearMine = ReadResLocInfo(statusPath, attackDatePath);
         }
 
         private void ReadLakeData()
         {
-            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[7]/div/div/div[2]/div";
-            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[7]/div/div/div[2]/div[1]/text()[2]";
+            var statusPath = "/html/body/div/main/section[2]/aside/article/div[3]/div[7]/div/div/div[3]/div";
+            var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[7]/div/div/div[3]/div[1]/text()[2]";
 
             Lake = ReadResLocInfo(statusPath, attackDatePath);
         }
