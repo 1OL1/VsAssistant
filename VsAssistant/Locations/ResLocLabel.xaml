@@ -7,10 +7,10 @@
              mc:Ignorable="d">
     <VisualStateManager.VisualStateGroups>
         <VisualStateGroup Name="Common">
-            <VisualState Name="Normal">
+            <VisualState Name="Free">
                 <VisualState.Storyboard>
                     <Storyboard>
-                        <ColorAnimation To="Black" Storyboard.TargetProperty="Foreground.Color" Duration="0"/>
+                        <ColorAnimation To="Green" Storyboard.TargetProperty="Foreground.Color" Duration="0"/>
 
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.FontWeight)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -23,15 +23,21 @@
                 </VisualState.Storyboard>
             </VisualState>
 
-            <VisualState Name="Free">
+            <VisualState Name="Occupied">
                 <VisualState.Storyboard>
                     <Storyboard>
-                        <ColorAnimation To="Green" Storyboard.TargetProperty="Foreground.Color" Duration="0"/>
+                        <ColorAnimation To="Yellow" Storyboard.TargetProperty="Foreground.Color" Duration="0"/>
+
+                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" AutoReverse="True" Duration="0:0:0.25"  RepeatBehavior="5x">
+                            <DoubleAnimation.EasingFunction>
+                                <ElasticEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
 
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.FontWeight)">
                             <DiscreteObjectKeyFrame KeyTime="0">
                                 <DiscreteObjectKeyFrame.Value>
-                                    <FontWeight>Normal</FontWeight>
+                                    <FontWeight>Bold</FontWeight>
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>
@@ -95,22 +101,6 @@
                                 <ElasticEase EasingMode="EaseInOut" />
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
-                    </Storyboard>
-                </VisualState.Storyboard>
-            </VisualState>
-
-            <VisualState Name="AlertNoBlink">
-                <VisualState.Storyboard>
-                    <Storyboard>
-                        <ColorAnimation To="Red" Storyboard.TargetProperty="Foreground.Color" Duration="0"/>
-
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.FontWeight)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <FontWeight>Normal</FontWeight>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState.Storyboard>
             </VisualState>

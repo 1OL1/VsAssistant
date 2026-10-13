@@ -66,29 +66,21 @@ namespace VsAssistant.Locations
 
                 case ResLocationStatus.Occupied when TimeToEvent.HasValue:
                     var time = TimeToEvent.Value;
-                    Content = (time < TimeSpan.Zero ? "-" : string.Empty) + time.ToString(@"hh\:mm\:ss");
+                    Content = time.ToString(@"mm\:ss");
 
-                    if (time < TimeSpan.Zero)
-                    {
-                        VisualStateManager.GoToElementState(this, "AlertNoBlink", false);
-                    }
-                    else if (time < TimeSpan.FromMinutes(2))
+                    if (time < TimeSpan.FromMinutes(2))
                     {
                         VisualStateManager.GoToElementState(this, "Alert", false);
                     }
-                    else if (time < TimeSpan.FromMinutes(15))
-                    {
-                        VisualStateManager.GoToElementState(this, "Warning", false);
-                    }
                     else
                     {
-                        VisualStateManager.GoToElementState(this, "Normal", false);
+                        VisualStateManager.GoToElementState(this, "Warning", false);
                     }
                     break;
 
                 default:
                     Content = "Занята";
-                    VisualStateManager.GoToElementState(this, "Normal", false);
+                    VisualStateManager.GoToElementState(this, "Occupied", false);
                     break;
             }
         }
