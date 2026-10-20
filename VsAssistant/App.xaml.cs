@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Media;
+using VsAssistant.Data;
 using VsAssistant.Locations;
 
 namespace VsAssistant
@@ -7,8 +8,13 @@ namespace VsAssistant
     public partial class App : System.Windows.Application
     {
         private NotifyIcon? trayIcon;
+        private LocationDataService? locationDataService;
+
         protected override void OnStartup(StartupEventArgs e)
         {
+            locationDataService = new LocationDataService();
+            locationDataService.Start();
+
             trayIcon = new NotifyIcon();
             trayIcon.Text = "ВС Ассистент";
             trayIcon.Icon = Resource.vs;
@@ -16,6 +22,13 @@ namespace VsAssistant
             trayIcon.ContextMenuStrip = CreateTrayMenu();
 
             base.OnStartup(e);
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            locationDataService?.Stop();
+
+            base.OnExit(e);
         }
 
         private ContextMenuStrip CreateTrayMenu()
@@ -27,7 +40,7 @@ namespace VsAssistant
             {
                 if (!Windows.OfType<LocWindow>().Any())
                 {
-                    new LocWindow().Show();
+                    new LocWindow(locationDataService!).Show();
                 }
             };
             menu.Items.Add(loc);

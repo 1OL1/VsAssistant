@@ -10,12 +10,14 @@ using VsAssistant.Data;
 
 namespace VsAssistant.Locations
 {
-    internal class LocViewModel : ObservableObject
+    internal class LocViewModel : ObservableObject, IDisposable
     {
         #region Members
+        private readonly LocationDataService dataService;
+        private readonly DispatcherTimer timer;
+
         private DateTime caveNextAttack;
         private DateTime portalNextAttack;
-        private DateTime lastTimerReload = DateTime.Now;
 
         private TimeSpan timeToCave;
         private TimeSpan timeToPortal;
@@ -28,7 +30,7 @@ namespace VsAssistant.Locations
             set { SetProperty(ref timeToCave, value); }
         }
 
-        public TimeSpan TimeToPortal 
+        public TimeSpan TimeToPortal
         {
             get { return timeToPortal; }
             set { SetProperty(ref timeToPortal, value); }
@@ -45,46 +47,54 @@ namespace VsAssistant.Locations
         private IEnumerable<ResLocViewModel> ResLocations => new[] { FarForest, NearForest, NortSwamp, SoutSwamp, WestMine, NearMine, Lake };
         #endregion
 
-        public LocViewModel()
+        public LocViewModel(LocationDataService dataService)
         {
-            this.ReloadData();
+            this.dataService = dataService;
+            this.dataService.DataUpdated += DataService_DataUpdated;
+
+            this.UpdateData();
             this.CalcTimes();
 
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMicroseconds(500);
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.Tick += Timer_Tick;
             timer.Start();
         }
 
+        #region Methods
+        public void Dispose()
+        {
+            timer.Stop();
+            dataService.DataUpdated -= DataService_DataUpdated;
+        }
+        #endregion
+
         #region Event Handlers
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            if ((DateTime.Now - lastTimerReload) > TimeSpan.FromSeconds(20))
-            {
-                this.ReloadData();
-                lastTimerReload = DateTime.Now;
-            }
+            this.CalcTimes();
+        }
 
+        private void DataService_DataUpdated(object? sender, EventArgs e)
+        {
+            this.UpdateData();
             this.CalcTimes();
         }
         #endregion
 
         #region Implementation
-        private void ReloadData()
+        private void UpdateData()
         {
-            var dataReader = new LocationPageReader();
-            dataReader.ReadData();
+            caveNextAttack = dataService.CaveNextAttack;
+            portalNextAttack = dataService.PortalNextAttack;
 
-            caveNextAttack = dataReader.CaveNextAttack;
-            portalNextAttack = dataReader.PortalNextAttack;
-
-            FarForest.Update(dataReader.FarForest);
-            NearForest.Update(dataReader.NearForest);
-            NortSwamp.Update(dataReader.NortSwamp);
-            SoutSwamp.Update(dataReader.SoutSwamp);
-            WestMine.Update(dataReader.WestMine);
-            NearMine.Update(dataReader.NearMine);
-            Lake.Update(dataReader.Lake);
+            FarForest.Update(dataService.FarForest);
+            NearForest.Update(dataService.NearForest);
+            NortSwamp.Update(dataService.NortSwamp);
+            SoutSwamp.Update(dataService.SoutSwamp);
+            WestMine.Update(dataService.WestMine);
+            NearMine.Update(dataService.NearMine);
+            Lake.Update(dataService.Lake);
         }
 
         private void CalcTimes()

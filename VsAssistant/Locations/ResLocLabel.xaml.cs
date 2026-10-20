@@ -55,7 +55,7 @@ namespace VsAssistant.Locations
             switch (Status)
             {
                 case ResLocationStatus.Free:
-                    Content = "Свбна.";
+                    Content = "Свбна";
                     VisualStateManager.GoToElementState(this, "Free", false);
                     break;
 

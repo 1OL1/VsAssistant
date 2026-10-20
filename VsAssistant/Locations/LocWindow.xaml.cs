@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using VsAssistant.Data;
 
 namespace VsAssistant.Locations
 {
@@ -21,15 +22,23 @@ namespace VsAssistant.Locations
     {
         private LocViewModel ViewModel => (LocViewModel)this.Root.DataContext;
 
-        public LocWindow()
+        internal LocWindow(LocationDataService dataService)
         {
             InitializeComponent();
 
-            this.Root.DataContext = new LocViewModel();
+            this.Root.DataContext = new LocViewModel(dataService);
 
             var desktopWorkingArea = SystemParameters.WorkArea;
             this.Left = desktopWorkingArea.Right - this.Width;
             this.Top = desktopWorkingArea.Bottom - this.Height;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            // The service outlives the window, so the view model must unsubscribe from it
+            this.ViewModel.Dispose();
+
+            base.OnClosed(e);
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
