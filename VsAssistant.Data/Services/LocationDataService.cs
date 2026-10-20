@@ -1,28 +1,50 @@
 ﻿using System.Diagnostics;
-using System.Windows.Threading;
+using VsAssistant.Data.Readers.Location;
 
-namespace VsAssistant.Data
+namespace VsAssistant.Data.Services
 {
     /// <summary>
     /// Periodically reads the locations page and keeps the latest data.
     /// One instance is shared between all forms that show location data.
+    /// Polling runs only while someone is subscribed to <see cref="DataUpdated"/>.
     /// </summary>
-    internal class LocationDataService
+    public class LocationDataService
     {
         #region Constants
         private static readonly TimeSpan reloadInterval = TimeSpan.FromSeconds(20);
         #endregion
 
         #region Members
-        private readonly DispatcherTimer timer;
+        private CancellationTokenSource? pollingCancellation;
         private bool isReloading;
+        private EventHandler? dataUpdated;
         #endregion
 
         #region Events
         /// <summary>
-        /// Raised on the UI thread after new data has been read.
+        /// Raised after new data has been read, on the synchronization context of the first subscriber
+        /// (the UI thread when subscribed from a form).
+        /// The first subscriber starts polling, the last one to unsubscribe stops it.
         /// </summary>
-        public event EventHandler? DataUpdated;
+        public event EventHandler? DataUpdated
+        {
+            add
+            {
+                dataUpdated += value;
+                if (dataUpdated != null && pollingCancellation == null)
+                {
+                    this.Start();
+                }
+            }
+            remove
+            {
+                dataUpdated -= value;
+                if (dataUpdated == null)
+                {
+                    this.Stop();
+                }
+            }
+        }
         #endregion
 
         #region Properties
@@ -40,34 +62,37 @@ namespace VsAssistant.Data
         public DateTime? LastUpdate { get; private set; }
         #endregion
 
-        public LocationDataService()
-        {
-            timer = new DispatcherTimer();
-            timer.Interval = reloadInterval;
-            timer.Tick += Timer_Tick;
-        }
-
-        #region Methods
-        public void Start()
-        {
-            timer.Start();
-            _ = this.ReloadDataAsync();
-        }
-
-        public void Stop()
-        {
-            timer.Stop();
-        }
-        #endregion
-
-        #region Event Handlers
-        private async void Timer_Tick(object? sender, EventArgs e)
-        {
-            await this.ReloadDataAsync();
-        }
-        #endregion
-
         #region Implementation
+        private void Start()
+        {
+            pollingCancellation = new CancellationTokenSource();
+            _ = this.PollAsync(pollingCancellation.Token);
+        }
+
+        private void Stop()
+        {
+            pollingCancellation?.Cancel();
+            pollingCancellation = null;
+        }
+
+        private async Task PollAsync(CancellationToken cancellationToken)
+        {
+            // Awaits resume on the caller's synchronization context, so all state changes happen on the UI thread
+            using var timer = new PeriodicTimer(reloadInterval);
+            try
+            {
+                do
+                {
+                    await this.ReloadDataAsync();
+                }
+                while (await timer.WaitForNextTickAsync(cancellationToken));
+            }
+            catch (OperationCanceledException)
+            {
+                // Last subscriber has left
+            }
+        }
+
         private async Task ReloadDataAsync()
         {
             if (isReloading)
@@ -81,7 +106,6 @@ namespace VsAssistant.Data
                 var dataReader = new LocationPageReader();
                 await Task.Run(dataReader.ReadData);
 
-                // Continuation runs on the UI thread, so subscribers can update bound properties directly
                 CaveNextAttack = dataReader.CaveNextAttack;
                 PortalNextAttack = dataReader.PortalNextAttack;
 
@@ -95,7 +119,7 @@ namespace VsAssistant.Data
 
                 LastUpdate = DateTime.Now;
 
-                DataUpdated?.Invoke(this, EventArgs.Empty);
+                dataUpdated?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)
             {

@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using VsAssistant.Data;
+using VsAssistant.Data.Services;
 
 namespace VsAssistant.Locations
 {

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
-using VsAssistant.Data;
+using VsAssistant.Data.Readers.Location;
 
 namespace VsAssistant.Locations
 {

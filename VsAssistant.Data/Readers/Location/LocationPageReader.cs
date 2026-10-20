@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VsAssistant.Data
+namespace VsAssistant.Data.Readers.Location
 {
-    internal class LocationPageReader
+    public class LocationPageReader
     {
         #region Constants
         private static readonly TimeZoneInfo serverTimeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
