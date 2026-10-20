@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Extensions.Logging;
 using VsAssistant.Data.Readers.Location;
 
 namespace VsAssistant.Data.Services
@@ -15,6 +15,7 @@ namespace VsAssistant.Data.Services
         #endregion
 
         #region Members
+        private readonly ILogger<LocationDataService> logger;
         private CancellationTokenSource? pollingCancellation;
         private bool isReloading;
         private EventHandler? dataUpdated;
@@ -62,16 +63,30 @@ namespace VsAssistant.Data.Services
         public DateTime? LastUpdate { get; private set; }
         #endregion
 
+        public LocationDataService(ILogger<LocationDataService> logger)
+        {
+            this.logger = logger;
+        }
+
         #region Implementation
         private void Start()
         {
+            logger.LogInformation("Location polling started");
+
             pollingCancellation = new CancellationTokenSource();
             _ = this.PollAsync(pollingCancellation.Token);
         }
 
         private void Stop()
         {
-            pollingCancellation?.Cancel();
+            if (pollingCancellation == null)
+            {
+                return;
+            }
+
+            logger.LogInformation("Location polling stopped");
+
+            pollingCancellation.Cancel();
             pollingCancellation = null;
         }
 
@@ -118,13 +133,14 @@ namespace VsAssistant.Data.Services
                 Lake = dataReader.Lake;
 
                 LastUpdate = DateTime.Now;
+                logger.LogDebug("Locations page read, cave at {CaveNextAttack}, portal at {PortalNextAttack}", CaveNextAttack, PortalNextAttack);
 
                 dataUpdated?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)
             {
                 // Keep the previous data and try again on the next tick
-                Debug.WriteLine($"Failed to read locations page: {ex}");
+                logger.LogWarning(ex, "Failed to read locations page");
             }
             finally
             {
