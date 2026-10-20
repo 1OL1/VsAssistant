@@ -1,24 +1,73 @@
+using System.Windows;
+using VsAssistant.Data.Services;
+using VsAssistant.Locations;
+
 namespace VsAssistant.Helpers
 {
-    internal static class TrayHelper
+    /// <summary>
+    /// Owns the tray icon with its context menu and opens forms from it.
+    /// </summary>
+    internal class TrayHelper : IDisposable
     {
-        #region Methods
-        /// <summary>
-        /// Creates a visible tray icon with a context menu made of the given items.
-        /// The caller must dispose the icon on exit, otherwise it stays in the tray until the mouse moves over it.
-        /// </summary>
-        public static NotifyIcon CreateTrayIcon(string text, Icon icon, params ToolStripItem[] menuItems)
-        {
-            var menu = new ContextMenuStrip();
-            menu.Items.AddRange(menuItems);
+        #region Members
+        private readonly LocationDataService locationDataService;
 
-            var trayIcon = new NotifyIcon();
-            trayIcon.Text = text;
-            trayIcon.Icon = icon;
+        private readonly ContextMenuStrip menu;
+        private readonly NotifyIcon trayIcon;
+        #endregion
+
+        public TrayHelper(LocationDataService locationDataService)
+        {
+            this.locationDataService = locationDataService;
+
+            menu = new ContextMenuStrip();
+            menu.Items.Add("Локи", null, LocationsMenuItem_Click);
+            menu.Items.Add(new ToolStripSeparator());
+            menu.Items.Add("Вьіход", null, ExitMenuItem_Click);
+
+            trayIcon = new NotifyIcon();
+            trayIcon.Text = "ВС Ассистент";
+            trayIcon.Icon = Resource.vs;
             trayIcon.ContextMenuStrip = menu;
             trayIcon.Visible = true;
+        }
 
-            return trayIcon;
+        #region Methods
+        public void Dispose()
+        {
+            // Without disposing, the icon stays in the tray until the mouse moves over it
+            trayIcon.Dispose();
+            menu.Dispose();
+        }
+        #endregion
+
+        #region Event Handlers
+        private void LocationsMenuItem_Click(object? sender, EventArgs e)
+        {
+            ShowSingleWindow(() => new LocWindow(locationDataService));
+        }
+
+        private void ExitMenuItem_Click(object? sender, EventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
+        #endregion
+
+        #region Implementation
+        /// <summary>
+        /// Shows a new window of the given type, or brings the already open one to front.
+        /// </summary>
+        private static void ShowSingleWindow<TWindow>(Func<TWindow> createWindow) where TWindow : Window
+        {
+            var window = System.Windows.Application.Current.Windows.OfType<TWindow>().FirstOrDefault();
+            if (window == null)
+            {
+                createWindow().Show();
+            }
+            else
+            {
+                window.Activate();
+            }
         }
         #endregion
     }
