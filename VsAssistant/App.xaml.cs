@@ -1,91 +1,102 @@
 ﻿using Microsoft.Extensions.Logging;
-using Serilog;
-using System.IO;
 using System.Windows;
-using System.Windows.Media;
 using VsAssistant.Data.Services;
+using VsAssistant.Helpers;
 using VsAssistant.Locations;
 
 namespace VsAssistant
 {
     public partial class App : System.Windows.Application
     {
-        private NotifyIcon? trayIcon;
-        private ILoggerFactory? loggerFactory;
-        private ILogger<App>? logger;
-        private LocationDataService? locationDataService;
+        #region Constants
+        private const string trayText = "ВС Ассистент";
+        #endregion
 
+        #region Members
+        private readonly ILoggerFactory loggerFactory;
+        private readonly ILogger<App> logger;
+        private readonly LocationDataService locationDataService;
+
+        private NotifyIcon? trayIcon;
+        #endregion
+
+        public App()
+        {
+            loggerFactory = LoggingHelper.CreateLoggerFactory();
+            logger = loggerFactory.CreateLogger<App>();
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+
+            // Shared by all forms that show location data
+            locationDataService = new LocationDataService(loggerFactory.CreateLogger<LocationDataService>());
+        }
+
+        #region Overrides
         protected override void OnStartup(StartupEventArgs e)
         {
-            loggerFactory = CreateLoggerFactory();
-            logger = loggerFactory.CreateLogger<App>();
+            base.OnStartup(e);
+
             logger.LogInformation("Application started, version {Version}", typeof(App).Assembly.GetName().Version);
 
-            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-                logger.LogCritical(e.ExceptionObject as Exception, "Unhandled exception, terminating: {IsTerminating}", e.IsTerminating);
-            TaskScheduler.UnobservedTaskException += (s, e) =>
-                logger.LogError(e.Exception, "Unobserved task exception");
-
-            locationDataService = new LocationDataService(loggerFactory.CreateLogger<LocationDataService>());
-
-            trayIcon = new NotifyIcon();
-            trayIcon.Text = "ВС Ассистент";
-            trayIcon.Icon = Resource.vs;
-            trayIcon.Visible = true;
-            trayIcon.ContextMenuStrip = CreateTrayMenu();
-
-            base.OnStartup(e);
+            trayIcon = TrayHelper.CreateTrayIcon(trayText, Resource.vs,
+                new ToolStripMenuItem("Локи", null, LocationsMenuItem_Click),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem("Вьіход", null, ExitMenuItem_Click));
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            logger?.LogInformation("Application exited with code {ExitCode}", e.ApplicationExitCode);
+            // Without disposing, the icon stays in the tray until the mouse moves over it
+            trayIcon?.Dispose();
+
+            logger.LogInformation("Application exited with code {ExitCode}", e.ApplicationExitCode);
 
             // Flushes and closes the log file
-            loggerFactory?.Dispose();
+            loggerFactory.Dispose();
 
             base.OnExit(e);
         }
+        #endregion
 
-        private static ILoggerFactory CreateLoggerFactory()
+        #region Event Handlers
+        private void LocationsMenuItem_Click(object? sender, EventArgs e)
         {
-            var logFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "VsAssistant", "Logs");
-
-            var serilogLogger = new LoggerConfiguration()
-#if DEBUG
-                .MinimumLevel.Debug()
-#else
-                .MinimumLevel.Information()
-#endif
-                .WriteTo.File(Path.Combine(logFolder, "VsAssistant-.log"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7)
-                .CreateLogger();
-
-            return LoggerFactory.Create(builder => builder.AddSerilog(serilogLogger, dispose: true));
+            this.ShowSingleWindow(() => new LocWindow(locationDataService));
         }
 
-        private ContextMenuStrip CreateTrayMenu()
+        private void ExitMenuItem_Click(object? sender, EventArgs e)
         {
-            var menu = new ContextMenuStrip();
+            this.Shutdown();
+        }
 
-            var loc = new ToolStripMenuItem("Локи");
-            loc.Click += (s, e) => 
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            logger.LogCritical(e.ExceptionObject as Exception, "Unhandled exception, terminating: {IsTerminating}", e.IsTerminating);
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+        {
+            logger.LogError(e.Exception, "Unobserved task exception");
+        }
+        #endregion
+
+        #region Implementation
+        /// <summary>
+        /// Shows a new window of the given type, or brings the already open one to front.
+        /// </summary>
+        private void ShowSingleWindow<TWindow>(Func<TWindow> createWindow) where TWindow : Window
+        {
+            var window = Windows.OfType<TWindow>().FirstOrDefault();
+            if (window == null)
             {
-                if (!Windows.OfType<LocWindow>().Any())
-                {
-                    new LocWindow(locationDataService!).Show();
-                }
-            };
-            menu.Items.Add(loc);
-
-            menu.Items.Add(new ToolStripSeparator());
-
-            var exit = new ToolStripMenuItem("Вьіход");
-            exit.Click += (s, e) => Current.Shutdown();
-
-            menu.Items.Add(exit);
-
-            return menu;
+                createWindow().Show();
+            }
+            else
+            {
+                window.Activate();
+            }
         }
+        #endregion
     }
-
 }
