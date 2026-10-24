@@ -1,4 +1,5 @@
 using System.Windows;
+using VsAssistant.Castles;
 using VsAssistant.Data.Services;
 using VsAssistant.Locations;
 using VsAssistant.Settings;
@@ -25,6 +26,7 @@ namespace VsAssistant.Helpers
 
             menu = new ContextMenuStrip();
             menu.Items.Add("Локи", null, LocationsMenuItem_Click);
+            menu.Items.Add("Замки", null, CastlesMenuItem_Click);
             menu.Items.Add(new ToolStripSeparator());
             menu.Items.Add("Вьіход", null, ExitMenuItem_Click);
 
@@ -41,6 +43,11 @@ namespace VsAssistant.Helpers
             ShowSingleWindow(() => new LocWindow(locationDataService, settingsService));
         }
 
+        public void ShowCastles()
+        {
+            ShowSingleWindow(() => new CastleWindow(locationDataService, settingsService));
+        }
+
         public void Dispose()
         {
             // Without disposing, the icon stays in the tray until the mouse moves over it
@@ -53,6 +60,11 @@ namespace VsAssistant.Helpers
         private void LocationsMenuItem_Click(object? sender, EventArgs e)
         {
             ShowLocations();
+        }
+
+        private void CastlesMenuItem_Click(object? sender, EventArgs e)
+        {
+            ShowCastles();
         }
 
         private void ExitMenuItem_Click(object? sender, EventArgs e)

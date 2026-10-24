@@ -1,0 +1,172 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:VsAssistant.Controls">
+    <Color x:Key="GoldColor">#D4AF5A</Color>
+    <SolidColorBrush x:Key="GoldBrush" Color="{StaticResource GoldColor}"/>
+    <SolidColorBrush x:Key="CaptionBrush" Color="#5A3B1E"/>
+    <SolidColorBrush x:Key="InkBrush" Color="#1E140A"/>
+
+    <LinearGradientBrush x:Key="FrameBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#F3D98B" Offset="0"/>
+        <GradientStop Color="#9C7A34" Offset="0.5"/>
+        <GradientStop Color="#E2C06A" Offset="1"/>
+    </LinearGradientBrush>
+
+    <RadialGradientBrush x:Key="PanelBrush" Center="0.5,0.4" GradientOrigin="0.5,0.4" RadiusX="0.9" RadiusY="0.8">
+        <GradientStop Color="#F7ECCF" Offset="0"/>
+        <GradientStop Color="#EAD7A8" Offset="0.7"/>
+        <GradientStop Color="#D9BF85" Offset="1"/>
+    </RadialGradientBrush>
+
+    <LinearGradientBrush x:Key="HeaderBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#4A3322" Offset="0"/>
+        <GradientStop Color="#2A1C12" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="DividerBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#008A6428" Offset="0"/>
+        <GradientStop Color="#8A6428" Offset="0.5"/>
+        <GradientStop Color="#008A6428" Offset="1"/>
+    </LinearGradientBrush>
+
+    <Style x:Key="HeaderButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource GoldBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Width" Value="18"/>
+        <Setter Property="Height" Value="18"/>
+        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1" CornerRadius="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#40D4AF5A"/>
+                <Setter Property="BorderBrush" Value="{StaticResource GoldBrush}"/>
+                <Setter Property="Foreground" Value="#FFE9B0"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#70D4AF5A"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource HeaderButton}">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#5A8B1A1A"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#A0B22222"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BaseContextMenu" TargetType="ContextMenu">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="FontFamily" Value="Palatino Linotype"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="#E8DCC0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContextMenu">
+                    <Border Background="{StaticResource HeaderBrush}"
+                            BorderBrush="{StaticResource GoldBrush}" BorderThickness="1"
+                            CornerRadius="3" Padding="0 2">
+                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BaseMenuItem" TargetType="MenuItem">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Border x:Name="Bd" Background="Transparent" Padding="4 2 12 2">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="Check" Width="16" Text="✓" FontFamily="Segoe UI Symbol"
+                                       Foreground="{StaticResource GoldBrush}" Visibility="Hidden"/>
+                            <ContentPresenter ContentSource="Header"/>
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Check" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#40D4AF5A"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:BaseWindow">
+        <Setter Property="WindowStyle" Value="None"/>
+        <Setter Property="AllowsTransparency" Value="True"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="ResizeMode" Value="NoResize"/>
+        <Setter Property="Topmost" Value="True"/>
+        <Setter Property="ShowInTaskbar" Value="False"/>
+        <Setter Property="FontFamily" Value="Palatino Linotype"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Typography.NumeralAlignment" Value="Tabular"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:BaseWindow">
+                    <Grid Margin="4">
+                        <Border CornerRadius="6" Background="Black">
+                            <Border.Effect>
+                                <DropShadowEffect Color="Black" BlurRadius="8" ShadowDepth="0" Opacity="0.8"/>
+                            </Border.Effect>
+                        </Border>
+
+                        <Border CornerRadius="6"
+                                BorderBrush="{StaticResource FrameBrush}" BorderThickness="2"
+                                Background="{StaticResource PanelBrush}">
+                            <DockPanel>
+                                <Border DockPanel.Dock="Top" CornerRadius="4 4 0 0"
+                                        Background="{StaticResource HeaderBrush}"
+                                        BorderBrush="{StaticResource GoldBrush}" BorderThickness="0 0 0 1">
+                                    <Grid Margin="6 2 2 2">
+                                        <TextBlock VerticalAlignment="Center" Text="{TemplateBinding Title}"
+                                                   FontFamily="Palatino Linotype, Segoe UI Symbol"
+                                                   Foreground="{StaticResource GoldBrush}"
+                                                   FontWeight="Bold" FontSize="12"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <Button x:Name="PART_OpacityButton" Style="{StaticResource HeaderButton}" Margin="0 0 2 0"
+                                                    Content="◐" ToolTip="Прозрачность"/>
+                                            <Button Style="{StaticResource CloseButton}"
+                                                    Command="{x:Static SystemCommands.CloseWindowCommand}" Content="✕"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <ContentPresenter/>
+                            </DockPanel>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

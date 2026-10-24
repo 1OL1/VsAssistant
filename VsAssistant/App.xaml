@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:VsAssistant"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
-         
+        <ResourceDictionary Source="Themes/BaseTheme.xaml"/>
     </Application.Resources>
 </Application>

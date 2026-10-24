@@ -5,10 +5,11 @@ namespace VsAssistant.Settings
     /// </summary>
     public class UserSettings
     {
-        public LocWindowSettings LocWindow { get; set; } = new LocWindowSettings();
+        public WindowSettings LocWindow { get; set; } = new WindowSettings();
+        public WindowSettings CastleWindow { get; set; } = new WindowSettings();
     }
 
-    public class LocWindowSettings
+    public class WindowSettings
     {
         /// <summary>
         /// Window position; null until the user moves the window.
