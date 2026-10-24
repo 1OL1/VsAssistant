@@ -11,10 +11,6 @@ namespace VsAssistant.Data.Readers.Location
 {
     public class LocationPageReader
     {
-        #region Constants
-        private static readonly TimeZoneInfo serverTimeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
-        #endregion
-
         #region Members
         private HtmlAgilityPack.HtmlDocument doc;
         #endregion
@@ -218,17 +214,7 @@ namespace VsAssistant.Data.Readers.Location
         {
             var text = doc.DocumentNode.SelectSingleNode(xPath)?.InnerText;
 
-            DateTime? date = null;
-            if (!string.IsNullOrEmpty(text))
-            {
-                text = text.Trim().Replace("в ", string.Empty);
-                if (DateTime.TryParseExact(text, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
-                {
-                    date = TimeZoneInfo.ConvertTime(parsedDate, serverTimeZone, TimeZoneInfo.Local);
-                }
-            }
-
-            return date;
+            return ServerTime.ParseToLocal(text?.Replace("в ", string.Empty));
         }
         #endregion
     }
