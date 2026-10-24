@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using VsAssistant.Data.Services;
+using VsAssistant.Settings;
 
 namespace VsAssistant.Locations
 {
@@ -23,15 +24,16 @@ namespace VsAssistant.Locations
     {
         private static readonly int[] OpacityLevels = { 100, 80, 60, 40, 20 };
 
-        // Kept across window instances, the tray creates a new window each time
-        private static double savedOpacity = 1;
+        private readonly SettingsService settingsService;
 
         private LocViewModel ViewModel => (LocViewModel)this.Root.DataContext;
+        private LocWindowSettings Settings => settingsService.Current.LocWindow;
 
-        internal LocWindow(LocationDataService dataService)
+        internal LocWindow(LocationDataService dataService, SettingsService settingsService)
         {
             InitializeComponent();
 
+            this.settingsService = settingsService;
             this.Root.DataContext = new LocViewModel(dataService);
 
             foreach (var percent in OpacityLevels)
@@ -40,11 +42,9 @@ namespace VsAssistant.Locations
                 item.Click += OpacityMenuItem_Click;
                 this.OpacityMenu.Items.Add(item);
             }
-            SetOpacity(savedOpacity);
+            ApplyOpacity(Settings.Opacity);
 
-            var desktopWorkingArea = SystemParameters.WorkArea;
-            this.Left = desktopWorkingArea.Right - this.Width;
-            this.Top = desktopWorkingArea.Bottom - this.Height;
+            RestorePosition();
         }
 
         protected override void OnClosed(EventArgs e)
@@ -61,9 +61,13 @@ namespace VsAssistant.Locations
 
             if (e.ChangedButton == MouseButton.Left)
             {
+                // Returns when the mouse button is released
                 this.DragMove();
-            }
 
+                Settings.Left = this.Left;
+                Settings.Top = this.Top;
+                settingsService.Save();
+            }
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -80,16 +84,39 @@ namespace VsAssistant.Locations
 
         private void OpacityMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            SetOpacity((double)((MenuItem)sender).Tag);
+            ApplyOpacity((double)((MenuItem)sender).Tag);
+
+            Settings.Opacity = this.Opacity;
+            settingsService.Save();
         }
 
-        private void SetOpacity(double opacity)
+        private void ApplyOpacity(double opacity)
         {
-            this.Opacity = savedOpacity = opacity;
+            // A hand-edited settings file may hold a value outside the menu range
+            this.Opacity = Math.Clamp(opacity, 0.2, 1);
 
             foreach (MenuItem item in this.OpacityMenu.Items)
             {
-                item.IsChecked = (double)item.Tag == opacity;
+                item.IsChecked = (double)item.Tag == this.Opacity;
+            }
+        }
+
+        private void RestorePosition()
+        {
+            var workArea = SystemParameters.WorkArea;
+            this.Left = workArea.Right - this.Width;
+            this.Top = workArea.Bottom - this.Height;
+
+            if (Settings.Left is double left && Settings.Top is double top)
+            {
+                // The saved position is skipped if it is no longer fully on screen, e.g. after a monitor was disconnected
+                var saved = new Rect(left, top, this.Width, this.Height);
+                var screen = new Rect(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
+                if (screen.Contains(saved))
+                {
+                    this.Left = left;
+                    this.Top = top;
+                }
             }
         }
     }

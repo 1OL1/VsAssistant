@@ -1,6 +1,7 @@
 using System.Windows;
 using VsAssistant.Data.Services;
 using VsAssistant.Locations;
+using VsAssistant.Settings;
 
 namespace VsAssistant.Helpers
 {
@@ -11,14 +12,16 @@ namespace VsAssistant.Helpers
     {
         #region Members
         private readonly LocationDataService locationDataService;
+        private readonly SettingsService settingsService;
 
         private readonly ContextMenuStrip menu;
         private readonly NotifyIcon trayIcon;
         #endregion
 
-        public TrayHelper(LocationDataService locationDataService)
+        public TrayHelper(LocationDataService locationDataService, SettingsService settingsService)
         {
             this.locationDataService = locationDataService;
+            this.settingsService = settingsService;
 
             menu = new ContextMenuStrip();
             menu.Items.Add("Локи", null, LocationsMenuItem_Click);
@@ -35,7 +38,7 @@ namespace VsAssistant.Helpers
         #region Methods
         public void ShowLocations()
         {
-            ShowSingleWindow(() => new LocWindow(locationDataService));
+            ShowSingleWindow(() => new LocWindow(locationDataService, settingsService));
         }
 
         public void Dispose()

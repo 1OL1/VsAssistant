@@ -2,6 +2,7 @@
 using System.Windows;
 using VsAssistant.Data.Services;
 using VsAssistant.Helpers;
+using VsAssistant.Settings;
 
 namespace VsAssistant
 {
@@ -50,7 +51,9 @@ namespace VsAssistant
 
             logger.LogInformation("Application started, version {Version}", typeof(App).Assembly.GetName().Version);
 
-            trayHelper = new TrayHelper(locationDataService);
+            var settingsService = new SettingsService(loggerFactory.CreateLogger<SettingsService>());
+
+            trayHelper = new TrayHelper(locationDataService, settingsService);
             trayHelper.ShowLocations();
         }
 
