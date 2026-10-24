@@ -32,7 +32,7 @@ namespace VsAssistant.BloodLog
             return new Point(workArea.Left + (workArea.Width - this.Width) / 2, workArea.Top + (workArea.Height - this.Height) / 2);
         }
 
-        private void ProfileLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        private void Link_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             // Opens the default browser; WPF does not navigate by itself outside a Frame
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });

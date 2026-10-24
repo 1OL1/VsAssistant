@@ -19,6 +19,8 @@ namespace VsAssistant.BloodLog
 
         public bool IsTeam1Winner { get; }
         public bool IsTeam2Winner { get; }
+
+        public Uri BattleLogUrl { get; }
         #endregion
 
         public BloodBattleViewModel(BloodBattleInfo info)
@@ -35,6 +37,8 @@ namespace VsAssistant.BloodLog
 
             IsTeam1Winner = info.WinnerTeam == 1;
             IsTeam2Winner = info.WinnerTeam == 2;
+
+            BattleLogUrl = new Uri($"https://vsmuta.com/battlelog/{info.Id}");
         }
 
         #region Methods

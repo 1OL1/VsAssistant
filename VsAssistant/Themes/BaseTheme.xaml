@@ -369,7 +369,24 @@
                                 <ContentPresenter/>
                             </DockPanel>
                         </Border>
+
+                        <Thumb x:Name="PART_ResizeGrip" Width="12" Height="12" Margin="0 0 4 4" Visibility="Collapsed"
+                               HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE" ToolTip="Изменить размер">
+                            <Thumb.Template>
+                                <ControlTemplate TargetType="Thumb">
+                                    <Border Background="Transparent">
+                                        <Path Data="M 11,1 L 1,11 M 11,5 L 5,11 M 11,9 L 9,11"
+                                              Stroke="{StaticResource InputBorderBrush}" StrokeThickness="1.2"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Thumb.Template>
+                        </Thumb>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsResizable" Value="True">
+                            <Setter TargetName="PART_ResizeGrip" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

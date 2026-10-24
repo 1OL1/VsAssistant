@@ -20,6 +20,25 @@ namespace VsAssistant.Controls
         private readonly ContextMenu opacityMenu;
         #endregion
 
+        #region Properties
+        public static readonly DependencyProperty IsResizableProperty =
+            DependencyProperty.Register(nameof(IsResizable), typeof(bool), typeof(BaseWindow), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Shows a resize grip in the bottom-right corner; the size is kept in settings.
+        /// </summary>
+        public bool IsResizable
+        {
+            get { return (bool)GetValue(IsResizableProperty); }
+            set { SetValue(IsResizableProperty, value); }
+        }
+
+        /// <summary>
+        /// When false the window always opens at its default position.
+        /// </summary>
+        public bool RemembersPosition { get; set; } = true;
+        #endregion
+
         internal BaseWindow(SettingsService settingsService, WindowSettings settings)
         {
             this.settingsService = settingsService;
@@ -50,6 +69,13 @@ namespace VsAssistant.Controls
                 opacityButton.Click += OpacityButton_Click;
                 opacityButton.ContextMenu = opacityMenu;
             }
+
+            // Resized by hand rather than with ResizeMode, which would let Windows snap the window to screen edges
+            if (GetTemplateChild("PART_ResizeGrip") is Thumb resizeGrip)
+            {
+                resizeGrip.DragDelta += ResizeGrip_DragDelta;
+                resizeGrip.DragCompleted += ResizeGrip_DragCompleted;
+            }
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -57,6 +83,7 @@ namespace VsAssistant.Controls
             base.OnInitialized(e);
 
             ApplyOpacity(settings.Opacity);
+            RestoreSize();
             RestorePosition();
         }
 
@@ -68,9 +95,12 @@ namespace VsAssistant.Controls
             {
                 DragMove();
 
-                settings.Left = Left;
-                settings.Top = Top;
-                settingsService.Save();
+                if (RemembersPosition)
+                {
+                    settings.Left = Left;
+                    settings.Top = Top;
+                    settingsService.Save();
+                }
             }
         }
         #endregion
@@ -91,11 +121,21 @@ namespace VsAssistant.Controls
             }
         }
 
+        private void RestoreSize()
+        {
+            if (IsResizable && settings.Width is double width && settings.Height is double height)
+            {
+                var workArea = SystemParameters.WorkArea;
+                Width = Math.Min(Math.Max(width, MinWidth), workArea.Width);
+                Height = Math.Min(Math.Max(height, MinHeight), workArea.Height);
+            }
+        }
+
         private void RestorePosition()
         {
             var position = GetDefaultPosition(SystemParameters.WorkArea);
 
-            if (settings.Left is double left && settings.Top is double top)
+            if (RemembersPosition && settings.Left is double left && settings.Top is double top)
             {
                 var saved = new Rect(left, top, Width, Height);
                 var screen = new Rect(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
@@ -122,6 +162,19 @@ namespace VsAssistant.Controls
             ApplyOpacity((double)((MenuItem)sender).Tag);
 
             settings.Opacity = Opacity;
+            settingsService.Save();
+        }
+
+        private void ResizeGrip_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            Width = Math.Max(MinWidth, Width + e.HorizontalChange);
+            Height = Math.Max(MinHeight, Height + e.VerticalChange);
+        }
+
+        private void ResizeGrip_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            settings.Width = Width;
+            settings.Height = Height;
             settingsService.Save();
         }
         #endregion

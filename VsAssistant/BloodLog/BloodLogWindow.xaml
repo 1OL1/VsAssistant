@@ -7,20 +7,21 @@
         xmlns:controls="clr-namespace:VsAssistant.Controls"
         mc:Ignorable="d"
         Title="Лог Крови"
-        Height="540" Width="780">
+        Height="540" Width="860" MinHeight="320" MinWidth="640"
+        IsResizable="True" RemembersPosition="False">
     <controls:BaseWindow.Resources>
         <DataTemplate x:Key="MemberTemplate" DataType="{x:Type local:BloodMemberViewModel}">
-            <StackPanel Orientation="Horizontal" Margin="0 1" ToolTip="{Binding ClanName}">
-                <Image Source="{Binding LogoUrl}" Width="14" Height="14" Margin="0 0 4 0" VerticalAlignment="Center"/>
-                <TextBlock VerticalAlignment="Center">
+            <DockPanel Margin="0 1" ToolTip="{Binding ClanName}">
+                <Image DockPanel.Dock="Left" Source="{Binding LogoUrl}" Width="14" Height="14" Margin="0 0 4 0" VerticalAlignment="Center"/>
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">
                     <Hyperlink Style="{StaticResource BaseHyperlink}" NavigateUri="{Binding ProfileUrl}"
-                               RequestNavigate="ProfileLink_RequestNavigate" ToolTip="Открыть профиль игрока">
+                               RequestNavigate="Link_RequestNavigate" ToolTip="Открыть профиль игрока">
                         <Run Text="{Binding Name, Mode=OneWay}"/>
                     </Hyperlink>
                 </TextBlock>
-                <TextBlock Text="{Binding ClanName, StringFormat=' · {0}'}" VerticalAlignment="Center"
+                <TextBlock Text="{Binding ClanName, StringFormat=' · {0}'}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                            Foreground="{StaticResource CaptionBrush}" FontStyle="Italic" FontWeight="Normal"/>
-            </StackPanel>
+            </DockPanel>
         </DataTemplate>
 
         <!-- The winning team gets a crown and bold names -->
@@ -100,15 +101,28 @@
         </DockPanel>
 
         <Grid>
-            <DataGrid Style="{StaticResource BaseDataGrid}" ItemsSource="{Binding Battles}">
+            <DataGrid Style="{StaticResource BaseDataGrid}" ItemsSource="{Binding Battles}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell" BasedOn="{StaticResource BaseDataGridCell}">
                         <Setter Property="Padding" Value="8 5"/>
                     </Style>
                 </DataGrid.CellStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Начало" Binding="{Binding TimeText}" SortMemberPath="Start"/>
-                    <DataGridTextColumn Header="Длит." Binding="{Binding DurationText}" SortMemberPath="Duration"/>
+                    <DataGridTextColumn Header="Начало" Width="Auto" Binding="{Binding TimeText}" SortMemberPath="Start"/>
+                    <DataGridTextColumn Header="Длит." Width="Auto" Binding="{Binding DurationText}" SortMemberPath="Duration"/>
+                    <DataGridTemplateColumn Header="Лог" Width="56">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock VerticalAlignment="Center">
+                                    <Hyperlink Style="{StaticResource BaseHyperlink}" NavigateUri="{Binding BattleLogUrl}"
+                                               RequestNavigate="Link_RequestNavigate" ToolTip="Открыть лог битвы на сайте">
+                                        <Run Text="Лог"/>
+                                    </Hyperlink>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Команда 1" Width="*" CellTemplate="{StaticResource Team1Template}"/>
                     <DataGridTemplateColumn Header="Команда 2" Width="*" CellTemplate="{StaticResource Team2Template}"/>
                 </DataGrid.Columns>
