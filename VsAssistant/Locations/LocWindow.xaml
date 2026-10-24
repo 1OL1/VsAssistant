@@ -6,56 +6,185 @@
         xmlns:local="clr-namespace:VsAssistant.Locations"
         mc:Ignorable="d"
         Title="Locations"
-        Height="200" Width="150" WindowStartupLocation="Manual"
-        Background="LightYellow"
-        WindowStyle="None" Topmost="True" ShowInTaskbar="False">
-    <Grid x:Name="Root">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="auto"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+        Height="250" Width="150" WindowStartupLocation="Manual"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        Topmost="True" ShowInTaskbar="False"
+        FontFamily="Palatino Linotype" FontSize="12"
+        Typography.NumeralAlignment="Tabular"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+    <Window.Resources>
+        <Color x:Key="GoldColor">#D4AF5A</Color>
+        <SolidColorBrush x:Key="GoldBrush" Color="{StaticResource GoldColor}"/>
+        <SolidColorBrush x:Key="CaptionBrush" Color="#5A3B1E"/>
 
-        <Label Grid.Column="0" Grid.Row="0" Content="Пещера:" HorizontalAlignment="Right" Padding="5 0 5 0" />
-        <local:CavePortalLabel Grid.Column="1" Grid.Row="0" TimeToEvent="{Binding TimeToCave}" Padding="0"/>
+        <LinearGradientBrush x:Key="FrameBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#F3D98B" Offset="0"/>
+            <GradientStop Color="#9C7A34" Offset="0.5"/>
+            <GradientStop Color="#E2C06A" Offset="1"/>
+        </LinearGradientBrush>
 
-        <Label Grid.Column="0" Grid.Row="1" Content="Портал:" HorizontalAlignment="Right" Padding="5 0 5 0"/>
-        <local:CavePortalLabel Grid.Column="1" Grid.Row="1" TimeToEvent="{Binding TimeToPortal}" Padding="0"/>
+        <!-- Light parchment keeps the dark state colors (Black, Green, DarkRed) readable -->
+        <RadialGradientBrush x:Key="PanelBrush" Center="0.5,0.4" GradientOrigin="0.5,0.4" RadiusX="0.9" RadiusY="0.8">
+            <GradientStop Color="#F7ECCF" Offset="0"/>
+            <GradientStop Color="#EAD7A8" Offset="0.7"/>
+            <GradientStop Color="#D9BF85" Offset="1"/>
+        </RadialGradientBrush>
 
-        <Label Grid.Column="0" Grid.Row="2" Content="Д.Лес:" HorizontalAlignment="Right" Padding="5 0 5 0"/>
-        <local:ResLocLabel Grid.Column="1" Grid.Row="2" Status="{Binding FarForest.Status}" TimeToEvent="{Binding FarForest.TimeToAttack}" Padding="0"/>
+        <LinearGradientBrush x:Key="HeaderBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#4A3322" Offset="0"/>
+            <GradientStop Color="#2A1C12" Offset="1"/>
+        </LinearGradientBrush>
 
-        <Label Grid.Column="0" Grid.Row="3" Content="Б.Лес:" HorizontalAlignment="Right" Padding="5 0 5 0"/>
-        <local:ResLocLabel Grid.Column="1" Grid.Row="3" Status="{Binding NearForest.Status}" TimeToEvent="{Binding NearForest.TimeToAttack}" Padding="0"/>
+        <LinearGradientBrush x:Key="DividerBrush" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#008A6428" Offset="0"/>
+            <GradientStop Color="#8A6428" Offset="0.5"/>
+            <GradientStop Color="#008A6428" Offset="1"/>
+        </LinearGradientBrush>
 
-        <Label Grid.Column="0" Grid.Row="4" Content="С.Блто:" HorizontalAlignment="Right" Padding="5 0 5 0"/>
-        <local:ResLocLabel Grid.Column="1" Grid.Row="4" Status="{Binding NortSwamp.Status}" TimeToEvent="{Binding NortSwamp.TimeToAttack}" Padding="0"/>
+        <!-- Location names; applies to plain Labels only, not to the status label subclasses -->
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="{StaticResource CaptionBrush}"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="6 0 6 0"/>
+        </Style>
 
-        <Label Grid.Column="0" Grid.Row="5" Content="Ю.Блто:" HorizontalAlignment="Right" Padding="5 0 5 0"/>
-        <local:ResLocLabel Grid.Column="1" Grid.Row="5" Status="{Binding SoutSwamp.Status}" TimeToEvent="{Binding SoutSwamp.TimeToAttack}" Padding="0"/>
+        <Style TargetType="local:CavePortalLabel">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
 
-        <Label Grid.Column="0" Grid.Row="6" Content="З.Шахта:" HorizontalAlignment="Right" Padding="5 0 5 0"/>
-        <local:ResLocLabel Grid.Column="1" Grid.Row="6" Status="{Binding WestMine.Status}" TimeToEvent="{Binding WestMine.TimeToAttack}" Padding="0"/>
+        <Style TargetType="local:ResLocLabel">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
 
-        <Label Grid.Column="0" Grid.Row="7" Content="Б.Шахта:" HorizontalAlignment="Right" Padding="5 0 5 0"/>
-        <local:ResLocLabel Grid.Column="1" Grid.Row="7" Status="{Binding NearMine.Status}" TimeToEvent="{Binding NearMine.TimeToAttack}" Padding="0"/>
+        <Style x:Key="RowStripe" TargetType="Border">
+            <Setter Property="Grid.ColumnSpan" Value="2"/>
+            <Setter Property="Background" Value="#148A6428"/>
+            <Setter Property="CornerRadius" Value="2"/>
+        </Style>
 
-        <Label Grid.Column="0" Grid.Row="8" Content="Озеро:" HorizontalAlignment="Right" Padding="5 0 5 0"/>
-        <local:ResLocLabel Grid.Column="1" Grid.Row="8" Status="{Binding Lake.Status}" TimeToEvent="{Binding Lake.TimeToAttack}" Padding="0"/>
+        <Style x:Key="CloseButton" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource GoldBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Width" Value="18"/>
+            <Setter Property="Height" Value="18"/>
+            <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1" CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#5A8B1A1A"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource GoldBrush}"/>
+                                <Setter Property="Foreground" Value="#FFE9B0"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#A0B22222"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
-        <StackPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Orientation="Vertical">
-            <Button Click="CloseButton_Click">X</Button>
-        </StackPanel>
+    <!-- Margin leaves room for the glow around the frame -->
+    <Grid Margin="4">
+        <!-- The glow sits on a separate backdrop: an effect on the content's parent would render all text as a blurry bitmap -->
+        <Border CornerRadius="6" Background="Black">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="8" ShadowDepth="0" Opacity="0.8"/>
+            </Border.Effect>
+        </Border>
+
+        <Border CornerRadius="6"
+                BorderBrush="{StaticResource FrameBrush}" BorderThickness="2"
+                Background="{StaticResource PanelBrush}">
+            <DockPanel>
+                <Border DockPanel.Dock="Top" CornerRadius="4 4 0 0"
+                        Background="{StaticResource HeaderBrush}"
+                        BorderBrush="{StaticResource GoldBrush}" BorderThickness="0 0 0 1">
+                    <Grid Margin="6 2 2 2">
+                        <TextBlock VerticalAlignment="Center"
+                                   Foreground="{StaticResource GoldBrush}"
+                                   FontWeight="Bold" FontSize="12">
+                            <Run FontFamily="Segoe UI Symbol" Text="⚔"/>
+                            <Run Text="Локации"/>
+                        </TextBlock>
+                        <Button Style="{StaticResource CloseButton}" HorizontalAlignment="Right"
+                                Click="CloseButton_Click" Content="✕"/>
+                    </Grid>
+                </Border>
+    
+                <Grid x:Name="Root" Margin="4 3 4 4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition Height="7"/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+    
+                    <Border Grid.Row="1" Style="{StaticResource RowStripe}"/>
+                    <Border Grid.Row="4" Style="{StaticResource RowStripe}"/>
+                    <Border Grid.Row="6" Style="{StaticResource RowStripe}"/>
+                    <Border Grid.Row="8" Style="{StaticResource RowStripe}"/>
+    
+                    <Label Grid.Column="0" Grid.Row="0" Content="Пещера:"/>
+                    <local:CavePortalLabel Grid.Column="1" Grid.Row="0" TimeToEvent="{Binding TimeToCave}"/>
+    
+                    <Label Grid.Column="0" Grid.Row="1" Content="Портал:"/>
+                    <local:CavePortalLabel Grid.Column="1" Grid.Row="1" TimeToEvent="{Binding TimeToPortal}"/>
+    
+                    <Rectangle Grid.Row="2" Grid.ColumnSpan="2" Height="1" Margin="4 0"
+                               Fill="{StaticResource DividerBrush}"/>
+    
+                    <Label Grid.Column="0" Grid.Row="3" Content="Д.Лес:"/>
+                    <local:ResLocLabel Grid.Column="1" Grid.Row="3" Status="{Binding FarForest.Status}" TimeToEvent="{Binding FarForest.TimeToAttack}"/>
+    
+                    <Label Grid.Column="0" Grid.Row="4" Content="Б.Лес:"/>
+                    <local:ResLocLabel Grid.Column="1" Grid.Row="4" Status="{Binding NearForest.Status}" TimeToEvent="{Binding NearForest.TimeToAttack}"/>
+    
+                    <Label Grid.Column="0" Grid.Row="5" Content="С.Блто:"/>
+                    <local:ResLocLabel Grid.Column="1" Grid.Row="5" Status="{Binding NortSwamp.Status}" TimeToEvent="{Binding NortSwamp.TimeToAttack}"/>
+    
+                    <Label Grid.Column="0" Grid.Row="6" Content="Ю.Блто:"/>
+                    <local:ResLocLabel Grid.Column="1" Grid.Row="6" Status="{Binding SoutSwamp.Status}" TimeToEvent="{Binding SoutSwamp.TimeToAttack}"/>
+    
+                    <Label Grid.Column="0" Grid.Row="7" Content="З.Шахта:"/>
+                    <local:ResLocLabel Grid.Column="1" Grid.Row="7" Status="{Binding WestMine.Status}" TimeToEvent="{Binding WestMine.TimeToAttack}"/>
+    
+                    <Label Grid.Column="0" Grid.Row="8" Content="Б.Шахта:"/>
+                    <local:ResLocLabel Grid.Column="1" Grid.Row="8" Status="{Binding NearMine.Status}" TimeToEvent="{Binding NearMine.TimeToAttack}"/>
+    
+                    <Label Grid.Column="0" Grid.Row="9" Content="Озеро:"/>
+                    <local:ResLocLabel Grid.Column="1" Grid.Row="9" Status="{Binding Lake.Status}" TimeToEvent="{Binding Lake.TimeToAttack}"/>
+                </Grid>
+            </DockPanel>
+        </Border>
     </Grid>
 </Window>
