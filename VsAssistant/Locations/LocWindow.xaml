@@ -24,7 +24,6 @@
             <GradientStop Color="#E2C06A" Offset="1"/>
         </LinearGradientBrush>
 
-        <!-- Light parchment keeps the dark state colors (Black, Green, DarkRed) readable -->
         <RadialGradientBrush x:Key="PanelBrush" Center="0.5,0.4" GradientOrigin="0.5,0.4" RadiusX="0.9" RadiusY="0.8">
             <GradientStop Color="#F7ECCF" Offset="0"/>
             <GradientStop Color="#EAD7A8" Offset="0.7"/>
@@ -42,7 +41,6 @@
             <GradientStop Color="#008A6428" Offset="1"/>
         </LinearGradientBrush>
 
-        <!-- Location names; applies to plain Labels only, not to the status label subclasses -->
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="{StaticResource CaptionBrush}"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -103,9 +101,8 @@
         </Style>
     </Window.Resources>
 
-    <!-- Margin leaves room for the glow around the frame -->
     <Grid Margin="4">
-        <!-- The glow sits on a separate backdrop: an effect on the content's parent would render all text as a blurry bitmap -->
+        <!-- Glow is kept off the content so the text stays sharp -->
         <Border CornerRadius="6" Background="Black">
             <Border.Effect>
                 <DropShadowEffect Color="Black" BlurRadius="8" ShadowDepth="0" Opacity="0.8"/>

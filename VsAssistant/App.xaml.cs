@@ -7,7 +7,13 @@ namespace VsAssistant
 {
     public partial class App : System.Windows.Application
     {
+        #region Constants
+        private const string SingleInstanceMutexName = @"Local\VsAssistant.SingleInstance";
+        #endregion
+
         #region Members
+        private readonly Mutex singleInstanceMutex;
+        private readonly bool isFirstInstance;
         private readonly ILoggerFactory loggerFactory;
         private readonly ILogger<App> logger;
         private readonly LocationDataService locationDataService;
@@ -17,6 +23,9 @@ namespace VsAssistant
 
         public App()
         {
+            // Handled in OnStartup: a message box here would run startup too early
+            singleInstanceMutex = new Mutex(true, SingleInstanceMutexName, out isFirstInstance);
+
             loggerFactory = LoggingHelper.CreateLoggerFactory();
             logger = loggerFactory.CreateLogger<App>();
 
@@ -32,6 +41,13 @@ namespace VsAssistant
         {
             base.OnStartup(e);
 
+            if (!isFirstInstance)
+            {
+                System.Windows.MessageBox.Show("ВС Ассистент уже запущен.", "ВС Ассистент", MessageBoxButton.OK, MessageBoxImage.Information);
+                Shutdown();
+                return;
+            }
+
             logger.LogInformation("Application started, version {Version}", typeof(App).Assembly.GetName().Version);
 
             trayHelper = new TrayHelper(locationDataService);
@@ -41,10 +57,15 @@ namespace VsAssistant
         {
             trayHelper?.Dispose();
 
-            logger.LogInformation("Application exited with code {ExitCode}", e.ApplicationExitCode);
+            if (isFirstInstance)
+            {
+                logger.LogInformation("Application exited with code {ExitCode}", e.ApplicationExitCode);
+                singleInstanceMutex.ReleaseMutex();
+            }
 
             // Flushes and closes the log file
             loggerFactory.Dispose();
+            singleInstanceMutex.Dispose();
 
             base.OnExit(e);
         }
