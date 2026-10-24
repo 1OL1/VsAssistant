@@ -51,6 +51,7 @@ namespace VsAssistant
             logger.LogInformation("Application started, version {Version}", typeof(App).Assembly.GetName().Version);
 
             trayHelper = new TrayHelper(locationDataService);
+            trayHelper.ShowLocations();
         }
 
         protected override void OnExit(ExitEventArgs e)

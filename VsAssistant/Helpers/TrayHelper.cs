@@ -33,6 +33,11 @@ namespace VsAssistant.Helpers
         }
 
         #region Methods
+        public void ShowLocations()
+        {
+            ShowSingleWindow(() => new LocWindow(locationDataService));
+        }
+
         public void Dispose()
         {
             // Without disposing, the icon stays in the tray until the mouse moves over it
@@ -44,7 +49,7 @@ namespace VsAssistant.Helpers
         #region Event Handlers
         private void LocationsMenuItem_Click(object? sender, EventArgs e)
         {
-            ShowSingleWindow(() => new LocWindow(locationDataService));
+            ShowLocations();
         }
 
         private void ExitMenuItem_Click(object? sender, EventArgs e)
