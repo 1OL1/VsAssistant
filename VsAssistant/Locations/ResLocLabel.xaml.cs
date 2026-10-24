@@ -48,6 +48,8 @@ namespace VsAssistant.Locations
         {
             InitializeComponent();
             UpdateView();
+
+            Loaded += (_, _) => UpdateView();
         }
 
         private void UpdateView()
@@ -56,12 +58,12 @@ namespace VsAssistant.Locations
             {
                 case ResLocationStatus.Free:
                     Content = "Свбна";
-                    VisualStateManager.GoToElementState(this, "Free", false);
+                    GoToState("Free");
                     break;
 
                 case ResLocationStatus.Battle:
                     Content = "Битва";
-                    VisualStateManager.GoToElementState(this, "Battle", false);
+                    GoToState("Battle");
                     break;
 
                 case ResLocationStatus.Occupied when TimeToEvent.HasValue:
@@ -70,18 +72,27 @@ namespace VsAssistant.Locations
 
                     if (time < TimeSpan.FromMinutes(2))
                     {
-                        VisualStateManager.GoToElementState(this, "Alert", false);
+                        GoToState("Alert");
                     }
                     else
                     {
-                        VisualStateManager.GoToElementState(this, "Warning", false);
+                        GoToState("Warning");
                     }
                     break;
 
                 default:
                     Content = "Занята";
-                    VisualStateManager.GoToElementState(this, "Occupied", false);
+                    GoToState("Occupied");
                     break;
+            }
+        }
+
+        private void GoToState(string state)
+        {
+            // Before loading, the window style still replaces Foreground and would discard the animated color
+            if (IsLoaded)
+            {
+                VisualStateManager.GoToElementState(this, state, false);
             }
         }
     }

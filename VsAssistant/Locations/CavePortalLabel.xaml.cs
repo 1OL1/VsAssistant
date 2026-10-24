@@ -28,32 +28,47 @@ namespace VsAssistant.Locations
 
         private static void TimeToEventChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (CavePortalLabel)d;
-            var time = (TimeSpan)e.NewValue;
-
-            control.Content = (time < TimeSpan.Zero ? "-" : string.Empty) + time.ToString(@"hh\:mm\:ss");
-
-            if (time < TimeSpan.Zero)
-            {
-                VisualStateManager.GoToElementState(control, "AlertNoBlink", false);
-            }
-            else if (time < TimeSpan.FromMinutes(2))
-            {
-                VisualStateManager.GoToElementState(control, "Alert", false);
-            }
-            else if (time < TimeSpan.FromMinutes(15))
-            {
-                VisualStateManager.GoToElementState(control, "Warning", false);
-            }
-            else
-            {
-                VisualStateManager.GoToElementState(control, "Normal", false);
-            }
+            ((CavePortalLabel)d).UpdateView();
         }
 
         public CavePortalLabel()
         {
             InitializeComponent();
+
+            Loaded += (_, _) => UpdateView();
+        }
+
+        private void UpdateView()
+        {
+            var time = TimeToEvent;
+
+            Content = (time < TimeSpan.Zero ? "-" : string.Empty) + time.ToString(@"hh\:mm\:ss");
+
+            if (time < TimeSpan.Zero)
+            {
+                GoToState("AlertNoBlink");
+            }
+            else if (time < TimeSpan.FromMinutes(2))
+            {
+                GoToState("Alert");
+            }
+            else if (time < TimeSpan.FromMinutes(15))
+            {
+                GoToState("Warning");
+            }
+            else
+            {
+                GoToState("Normal");
+            }
+        }
+
+        private void GoToState(string state)
+        {
+            // Before loading, the window style still replaces Foreground and would discard the animated color
+            if (IsLoaded)
+            {
+                VisualStateManager.GoToElementState(this, state, false);
+            }
         }
     }
 }
