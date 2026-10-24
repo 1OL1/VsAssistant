@@ -28,11 +28,11 @@ namespace VsAssistant.Helpers
             menu.Items.Add("Локи", null, LocationsMenuItem_Click);
             menu.Items.Add("Замки", null, CastlesMenuItem_Click);
             menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add("Вьіход", null, ExitMenuItem_Click);
+            menu.Items.Add("Выход", null, ExitMenuItem_Click);
 
             trayIcon = new NotifyIcon();
             trayIcon.Text = "ВС Ассистент";
-            trayIcon.Icon = Resource.vs;
+            trayIcon.Icon = new Icon(Resource.vs, SystemInformation.SmallIconSize);
             trayIcon.ContextMenuStrip = menu;
             trayIcon.Visible = true;
         }

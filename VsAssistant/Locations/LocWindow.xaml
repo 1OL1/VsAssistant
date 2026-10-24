@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:VsAssistant.Locations"
         xmlns:controls="clr-namespace:VsAssistant.Controls"
         mc:Ignorable="d"
-        Title="⚔ Локи"
+        Title="Локи"
         Height="250" Width="150">
     <controls:BaseWindow.Resources>
         <Style TargetType="Label">

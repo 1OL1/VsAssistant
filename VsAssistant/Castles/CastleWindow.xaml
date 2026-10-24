@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:VsAssistant.Castles"
         xmlns:controls="clr-namespace:VsAssistant.Controls"
         mc:Ignorable="d"
-        Title="🏰 Замки"
+        Title="Замки"
         Height="130" Width="190">
     <controls:BaseWindow.Resources>
         <DataTemplate DataType="{x:Type local:CastleViewModel}">

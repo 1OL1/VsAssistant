@@ -15,7 +15,7 @@ namespace VsAssistant.Castles
 
         #region Properies
         public CastleViewModel FearCastle { get; } = new CastleViewModel("Страх");
-        public CastleViewModel GhostCastle { get; } = new CastleViewModel("Приви");
+        public CastleViewModel GhostCastle { get; } = new CastleViewModel("Привы");
         public CastleViewModel SteelCastle { get; } = new CastleViewModel("Сталь");
         public CastleViewModel WhiteStoneCastle { get; } = new CastleViewModel("БК");
 

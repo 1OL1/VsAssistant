@@ -71,8 +71,8 @@ namespace VsAssistant.Castles
         {
             StatusText = Status switch
             {
-                CastleStatus.AssaultRequested => $"⏳ {MinutesToBattle():00} мин.",
-                CastleStatus.Battle => "⚔ Битва",
+                CastleStatus.AssaultRequested => $"{MinutesToBattle():00} мин.",
+                CastleStatus.Battle => "Битва",
                 _ => ownerName ?? string.Empty
             };
 
