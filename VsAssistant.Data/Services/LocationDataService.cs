@@ -60,6 +60,11 @@ namespace VsAssistant.Data.Services
         public ResLocationInfo NearMine { get; private set; } = new ResLocationInfo();
         public ResLocationInfo Lake { get; private set; } = new ResLocationInfo();
 
+        public CastleInfo FearCastle { get; private set; } = new CastleInfo();
+        public CastleInfo GhostCastle { get; private set; } = new CastleInfo();
+        public CastleInfo SteelCastle { get; private set; } = new CastleInfo();
+        public CastleInfo WhiteStoneCastle { get; private set; } = new CastleInfo();
+
         public DateTime? LastUpdate { get; private set; }
         #endregion
 
@@ -131,6 +136,11 @@ namespace VsAssistant.Data.Services
                 WestMine = dataReader.WestMine;
                 NearMine = dataReader.NearMine;
                 Lake = dataReader.Lake;
+
+                FearCastle = dataReader.FearCastle;
+                GhostCastle = dataReader.GhostCastle;
+                SteelCastle = dataReader.SteelCastle;
+                WhiteStoneCastle = dataReader.WhiteStoneCastle;
 
                 LastUpdate = DateTime.Now;
                 logger.LogDebug("Locations page read, cave at {CaveNextAttack}, portal at {PortalNextAttack}", CaveNextAttack, PortalNextAttack);

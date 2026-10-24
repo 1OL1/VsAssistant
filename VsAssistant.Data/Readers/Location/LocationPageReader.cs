@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace VsAssistant.Data.Readers.Location
@@ -29,6 +30,11 @@ namespace VsAssistant.Data.Readers.Location
         public ResLocationInfo WestMine { get; private set; } = new ResLocationInfo();
         public ResLocationInfo NearMine { get; private set; } = new ResLocationInfo();
         public ResLocationInfo Lake { get; private set; } = new ResLocationInfo();
+
+        public CastleInfo FearCastle { get; private set; } = new CastleInfo();
+        public CastleInfo GhostCastle { get; private set; } = new CastleInfo();
+        public CastleInfo SteelCastle { get; private set; } = new CastleInfo();
+        public CastleInfo WhiteStoneCastle { get; private set; } = new CastleInfo();
         #endregion
 
         #region Methods
@@ -47,6 +53,11 @@ namespace VsAssistant.Data.Readers.Location
             ReadWestMineData();
             ReadNearMineData();
             ReadLakeData();
+
+            ReadFearCastleData();
+            ReadGhostCastleData();
+            ReadSteelCastleData();
+            ReadWhiteStoneCastleData();
         }
         #endregion
 
@@ -123,6 +134,73 @@ namespace VsAssistant.Data.Readers.Location
             var attackDatePath = "/html/body/div/main/section[2]/aside/article/div[3]/div[7]/div/div/div[3]/div[1]/text()[2]";
 
             Lake = ReadResLocInfo(statusPath, attackDatePath);
+        }
+
+        private void ReadFearCastleData()
+        {
+            var ownerLogoPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[1]/div[1]/img";
+            var attackerLogoPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[1]/div[3]/img";
+            var statusPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[1]/div[2]/div[2]";
+
+            FearCastle = ReadCastleInfo(ownerLogoPath, attackerLogoPath, statusPath);
+        }
+
+        private void ReadGhostCastleData()
+        {
+            var ownerLogoPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[3]/div[1]/img";
+            var attackerLogoPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[3]/div[3]/img";
+            var statusPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[3]/div[2]/div[2]";
+
+            GhostCastle = ReadCastleInfo(ownerLogoPath, attackerLogoPath, statusPath);
+        }
+
+        private void ReadSteelCastleData()
+        {
+            var ownerLogoPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[5]/div[1]/img";
+            var attackerLogoPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[5]/div[3]/img";
+            var statusPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[5]/div[2]/div[2]";
+
+            SteelCastle = ReadCastleInfo(ownerLogoPath, attackerLogoPath, statusPath);
+        }
+
+        private void ReadWhiteStoneCastleData()
+        {
+            var ownerLogoPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[7]/div[1]/img";
+            var attackerLogoPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[7]/div[3]/img";
+            var statusPath = "/html/body/div/main/section[1]/aside[2]/article[2]/div[7]/div[2]/div[2]";
+
+            WhiteStoneCastle = ReadCastleInfo(ownerLogoPath, attackerLogoPath, statusPath);
+        }
+
+        private CastleInfo ReadCastleInfo(string ownerLogoPath, string attackerLogoPath, string statusPath)
+        {
+            var ownerId = ReadClanId(ownerLogoPath);
+            var attackerId = ReadClanId(attackerLogoPath);
+            var text = HtmlEntity.DeEntitize(doc.DocumentNode.SelectSingleNode(statusPath)?.InnerText ?? string.Empty).Trim();
+
+            var startMatch = Regex.Match(text, @"Битва начнется через\s*(\d+)\s*мин");
+            var status = startMatch.Success ? CastleStatus.AssaultRequested
+                : text.Contains("Идет битва") ? CastleStatus.Battle : CastleStatus.Normal;
+
+            // The page shows whole minutes only, so the battle can start up to a minute later
+            DateTime? battleStart = startMatch.Success ? DateTime.Now.AddMinutes(int.Parse(startMatch.Groups[1].Value)) : null;
+
+            // While the castle is not attacked, the status line holds the owner clan name
+            var ownerName = status == CastleStatus.Normal && text.Length > 0 ? text : null;
+
+            var owner = ownerId.HasValue ? new ClanInfo(ownerId.Value, ownerName) : null;
+            var attacker = attackerId.HasValue ? new ClanInfo(attackerId.Value, null) : null;
+
+            return new CastleInfo(status, owner, attacker, battleStart);
+        }
+
+        private int? ReadClanId(string logoPath)
+        {
+            // Clan id is the logo file name, e.g. https://vsmuta.com/images/clan/36.png
+            var src = doc.DocumentNode.SelectSingleNode(logoPath)?.GetAttributeValue("src", string.Empty);
+            var match = Regex.Match(src ?? string.Empty, @"(\d+)\.png$");
+
+            return match.Success ? int.Parse(match.Groups[1].Value) : null;
         }
 
         private ResLocationInfo ReadResLocInfo(string statusPath, string attackDatePath)
