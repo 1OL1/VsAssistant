@@ -43,13 +43,9 @@ OutputBaseFilename=VsAssistant-Setup-{#AppVersion}
 
 [Languages]
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
-Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
-Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [CustomMessages]
-russian.AutoStart=Запускать при входе в Windows
-ukrainian.AutoStart=Запускати під час входу до Windows
-english.AutoStart=Start when I sign in to Windows
+AutoStart=Запускать при входе в Windows
 
 [Tasks]
 Name: "autostart"; Description: "{cm:AutoStart}"
