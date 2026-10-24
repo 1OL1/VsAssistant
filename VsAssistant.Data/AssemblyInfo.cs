@@ -13,7 +13,3 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © Oleh Ivanitskyy 2024-2026")]
 
 [assembly: ComVisible(false)]
-
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: AssemblyInformationalVersion("1.0.0")]
