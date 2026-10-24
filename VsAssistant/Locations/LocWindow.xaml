@@ -8,7 +8,7 @@
         Title="Locations"
         Height="250" Width="150" WindowStartupLocation="Manual"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
-        Topmost="True" ShowInTaskbar="False"
+        ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False"
         FontFamily="Palatino Linotype" FontSize="12"
         Typography.NumeralAlignment="Tabular"
         UseLayoutRounding="True"
@@ -66,7 +66,7 @@
             <Setter Property="CornerRadius" Value="2"/>
         </Style>
 
-        <Style x:Key="CloseButton" TargetType="Button">
+        <Style x:Key="HeaderButton" TargetType="Button">
             <Setter Property="Foreground" Value="{StaticResource GoldBrush}"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -85,14 +85,69 @@
                                 BorderThickness="1" CornerRadius="3">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#40D4AF5A"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource GoldBrush}"/>
+                    <Setter Property="Foreground" Value="#FFE9B0"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#70D4AF5A"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource HeaderButton}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#5A8B1A1A"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#A0B22222"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="GameContextMenu" TargetType="ContextMenu">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="FontFamily" Value="Palatino Linotype"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#E8DCC0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContextMenu">
+                        <Border Background="{StaticResource HeaderBrush}"
+                                BorderBrush="{StaticResource GoldBrush}" BorderThickness="1"
+                                CornerRadius="3" Padding="0 2">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GameMenuItem" TargetType="MenuItem">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border x:Name="Bd" Background="Transparent" Padding="4 2 12 2">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="Check" Width="16" Text="✓" FontFamily="Segoe UI Symbol"
+                                           Foreground="{StaticResource GoldBrush}" Visibility="Hidden"/>
+                                <ContentPresenter ContentSource="Header"/>
+                            </StackPanel>
+                        </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#5A8B1A1A"/>
-                                <Setter Property="BorderBrush" Value="{StaticResource GoldBrush}"/>
-                                <Setter Property="Foreground" Value="#FFE9B0"/>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Check" Property="Visibility" Value="Visible"/>
                             </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#A0B22222"/>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#40D4AF5A"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -121,10 +176,19 @@
                                    Foreground="{StaticResource GoldBrush}"
                                    FontWeight="Bold" FontSize="12">
                             <Run FontFamily="Segoe UI Symbol" Text="⚔"/>
-                            <Run Text="Локации"/>
+                            <Run Text="Локи"/>
                         </TextBlock>
-                        <Button Style="{StaticResource CloseButton}" HorizontalAlignment="Right"
-                                Click="CloseButton_Click" Content="✕"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button x:Name="OpacityButton" Style="{StaticResource HeaderButton}" Margin="0 0 2 0"
+                                    Click="OpacityButton_Click" Content="◐" ToolTip="Прозрачность">
+                                <Button.ContextMenu>
+                                    <ContextMenu x:Name="OpacityMenu" Style="{StaticResource GameContextMenu}"
+                                                 ItemContainerStyle="{StaticResource GameMenuItem}"/>
+                                </Button.ContextMenu>
+                            </Button>
+                            <Button Style="{StaticResource CloseButton}"
+                                    Click="CloseButton_Click" Content="✕"/>
+                        </StackPanel>
                     </Grid>
                 </Border>
     
