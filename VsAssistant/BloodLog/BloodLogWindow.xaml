@@ -1,0 +1,121 @@
+<controls:BaseWindow x:Class="VsAssistant.BloodLog.BloodLogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VsAssistant.BloodLog"
+        xmlns:controls="clr-namespace:VsAssistant.Controls"
+        mc:Ignorable="d"
+        Title="Лог Крови"
+        Height="540" Width="780">
+    <controls:BaseWindow.Resources>
+        <DataTemplate x:Key="MemberTemplate" DataType="{x:Type local:BloodMemberViewModel}">
+            <StackPanel Orientation="Horizontal" Margin="0 1" ToolTip="{Binding ClanName}">
+                <Image Source="{Binding LogoUrl}" Width="14" Height="14" Margin="0 0 4 0" VerticalAlignment="Center"/>
+                <TextBlock VerticalAlignment="Center">
+                    <Hyperlink Style="{StaticResource BaseHyperlink}" NavigateUri="{Binding ProfileUrl}"
+                               RequestNavigate="ProfileLink_RequestNavigate" ToolTip="Открыть профиль игрока">
+                        <Run Text="{Binding Name, Mode=OneWay}"/>
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock Text="{Binding ClanName, StringFormat=' · {0}'}" VerticalAlignment="Center"
+                           Foreground="{StaticResource CaptionBrush}" FontStyle="Italic" FontWeight="Normal"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- The winning team gets a crown and bold names -->
+        <DataTemplate x:Key="Team1Template">
+            <DockPanel>
+                <TextBlock x:Name="Crown" DockPanel.Dock="Right" Text="♛" ToolTip="Победа" Visibility="Collapsed" Margin="8 0 0 0"
+                           FontFamily="Segoe UI Symbol" FontSize="18" Foreground="#A3160C" VerticalAlignment="Center"/>
+                <ItemsControl x:Name="Members" ItemsSource="{Binding Team1}" ItemTemplate="{StaticResource MemberTemplate}" Focusable="False"/>
+            </DockPanel>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsTeam1Winner}" Value="True">
+                    <Setter TargetName="Crown" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="Members" Property="TextElement.FontWeight" Value="Bold"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Team2Template">
+            <DockPanel>
+                <TextBlock x:Name="Crown" DockPanel.Dock="Right" Text="♛" ToolTip="Победа" Visibility="Collapsed" Margin="8 0 0 0"
+                           FontFamily="Segoe UI Symbol" FontSize="18" Foreground="#A3160C" VerticalAlignment="Center"/>
+                <ItemsControl x:Name="Members" ItemsSource="{Binding Team2}" ItemTemplate="{StaticResource MemberTemplate}" Focusable="False"/>
+            </DockPanel>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsTeam2Winner}" Value="True">
+                    <Setter TargetName="Crown" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="Members" Property="TextElement.FontWeight" Value="Bold"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </controls:BaseWindow.Resources>
+
+    <!-- Larger than the other windows: a table of names is read, not glanced at -->
+    <DockPanel x:Name="Root" Margin="10 8 10 8" TextElement.FontSize="14">
+        <!-- Toolbar: day navigation on the left, search and refresh on the right -->
+        <DockPanel DockPanel.Dock="Top" Margin="0 0 0 8">
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                <Button Style="{StaticResource BaseButton}" Content="◀" ToolTip="Предыдущий день"
+                        FontFamily="Segoe UI Symbol" Command="{Binding PreviousDayCommand}"/>
+                <DatePicker Style="{StaticResource BaseDatePicker}" Width="140" Margin="4 0"
+                            SelectedDate="{Binding SelectedDate}" DisplayDateEnd="{Binding MaxDate, Mode=OneWay}"/>
+                <Button Style="{StaticResource BaseButton}" Content="▶" ToolTip="Следующий день"
+                        FontFamily="Segoe UI Symbol" Command="{Binding NextDayCommand}"/>
+                <Button Style="{StaticResource BaseButton}" Content="Сегодня" Margin="4 0 0 0"
+                        Command="{Binding TodayCommand}"/>
+            </StackPanel>
+
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Grid Width="220">
+                    <TextBox x:Name="SearchBox" Style="{StaticResource BaseTextBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="🔍 Игрок или клан" Margin="6 0" VerticalAlignment="Center" IsHitTestVisible="False"
+                               FontFamily="Palatino Linotype, Segoe UI Symbol" FontStyle="Italic"
+                               Foreground="{StaticResource CaptionBrush}" Opacity="0.7">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+                <Button Style="{StaticResource BaseButton}" Content="⟳" ToolTip="Обновить" Margin="4 0 0 0"
+                        FontFamily="Segoe UI Symbol" Command="{Binding RefreshCommand}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Status bar -->
+        <DockPanel DockPanel.Dock="Bottom" Margin="0 6 0 0">
+            <TextBlock DockPanel.Dock="Right" Text="{Binding StatusText}" Foreground="{StaticResource CaptionBrush}"/>
+            <TextBlock Text="{Binding ErrorText}" Foreground="{StaticResource ErrorBrush}" TextTrimming="CharacterEllipsis"
+                       ToolTip="{Binding ErrorText}"/>
+        </DockPanel>
+
+        <Grid>
+            <DataGrid Style="{StaticResource BaseDataGrid}" ItemsSource="{Binding Battles}">
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource BaseDataGridCell}">
+                        <Setter Property="Padding" Value="8 5"/>
+                    </Style>
+                </DataGrid.CellStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Начало" Binding="{Binding TimeText}" SortMemberPath="Start"/>
+                    <DataGridTextColumn Header="Длит." Binding="{Binding DurationText}" SortMemberPath="Duration"/>
+                    <DataGridTemplateColumn Header="Команда 1" Width="*" CellTemplate="{StaticResource Team1Template}"/>
+                    <DataGridTemplateColumn Header="Команда 2" Width="*" CellTemplate="{StaticResource Team2Template}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <TextBlock Text="{Binding EmptyText}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontStyle="Italic" Foreground="{StaticResource CaptionBrush}" IsHitTestVisible="False"/>
+        </Grid>
+    </DockPanel>
+</controls:BaseWindow>

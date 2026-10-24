@@ -7,6 +7,7 @@ namespace VsAssistant.Settings
     {
         public WindowSettings LocWindow { get; set; } = new WindowSettings();
         public WindowSettings CastleWindow { get; set; } = new WindowSettings();
+        public WindowSettings BloodLogWindow { get; set; } = new WindowSettings();
     }
 
     public class WindowSettings

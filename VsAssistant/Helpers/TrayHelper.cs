@@ -1,4 +1,5 @@
 using System.Windows;
+using VsAssistant.BloodLog;
 using VsAssistant.Castles;
 using VsAssistant.Data.Services;
 using VsAssistant.Locations;
@@ -28,6 +29,8 @@ namespace VsAssistant.Helpers
             menu.Items.Add("Локи", null, LocationsMenuItem_Click);
             menu.Items.Add("Замки", null, CastlesMenuItem_Click);
             menu.Items.Add(new ToolStripSeparator());
+            menu.Items.Add("Лог Крови", null, BloodLogMenuItem_Click);
+            menu.Items.Add(new ToolStripSeparator());
             menu.Items.Add("Выход", null, ExitMenuItem_Click);
 
             trayIcon = new NotifyIcon();
@@ -48,6 +51,11 @@ namespace VsAssistant.Helpers
             ShowSingleWindow(() => new CastleWindow(locationDataService, settingsService));
         }
 
+        public void ShowBloodLog()
+        {
+            ShowSingleWindow(() => new BloodLogWindow(settingsService));
+        }
+
         public void Dispose()
         {
             // Without disposing, the icon stays in the tray until the mouse moves over it
@@ -65,6 +73,11 @@ namespace VsAssistant.Helpers
         private void CastlesMenuItem_Click(object? sender, EventArgs e)
         {
             ShowCastles();
+        }
+
+        private void BloodLogMenuItem_Click(object? sender, EventArgs e)
+        {
+            ShowBloodLog();
         }
 
         private void ExitMenuItem_Click(object? sender, EventArgs e)

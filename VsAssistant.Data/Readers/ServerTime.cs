@@ -5,10 +5,14 @@ namespace VsAssistant.Data.Readers
     /// <summary>
     /// Converts game server (Kyiv) times to local time.
     /// </summary>
-    internal static class ServerTime
+    public static class ServerTime
     {
         #region Constants
         public static readonly TimeZoneInfo TimeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
+        #endregion
+
+        #region Properties
+        public static DateOnly Today => DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(DateTime.Now, TimeZone));
         #endregion
 
         #region Methods

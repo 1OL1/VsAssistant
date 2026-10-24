@@ -118,7 +118,212 @@
         </Setter>
     </Style>
 
+    <SolidColorBrush x:Key="InputBrush" Color="#FBF4E2"/>
+    <SolidColorBrush x:Key="InputBorderBrush" Color="#8A6428"/>
+    <SolidColorBrush x:Key="InputFocusBrush" Color="#B07A20"/>
+    <SolidColorBrush x:Key="RowSelectionBrush" Color="#40D4AF5A"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="#9A1B10"/>
+
+    <Style x:Key="BaseButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#F8EBC8" Offset="0"/>
+                    <GradientStop Color="#E2C88C" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderBrush" Value="{StaticResource InputBorderBrush}"/>
+        <Setter Property="Padding" Value="8 2"/>
+        <Setter Property="MinWidth" Value="24"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1" CornerRadius="3">
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#FFF4D8"/>
+                <Setter Property="BorderBrush" Value="{StaticResource InputFocusBrush}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#D9BF85"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.45"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BaseTextBox" TargetType="TextBox">
+        <Setter Property="SelectionBrush" Value="{StaticResource GoldBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
+        <Setter Property="Background" Value="{StaticResource InputBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource InputBorderBrush}"/>
+        <Setter Property="Padding" Value="3 1"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1" CornerRadius="3">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource InputFocusBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BaseHyperlink" TargetType="Hyperlink">
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
+        <Setter Property="TextDecorations" Value="{x:Null}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+                <Setter Property="TextDecorations" Value="Underline"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BaseCalendar" TargetType="Calendar">
+        <Setter Property="Background" Value="{StaticResource InputBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource InputBorderBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
+    </Style>
+
+    <Style x:Key="BaseDatePicker" TargetType="DatePicker">
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
+        <Setter Property="Background" Value="{StaticResource InputBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource InputBorderBrush}"/>
+        <Setter Property="CalendarStyle" Value="{StaticResource BaseCalendar}"/>
+        <Setter Property="SelectedDateFormat" Value="Short"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <!-- Part names are required by DatePicker: it fills the popup with its calendar in code -->
+                <ControlTemplate TargetType="DatePicker">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1" CornerRadius="3">
+                        <Grid x:Name="PART_Root">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <DatePickerTextBox x:Name="PART_TextBox" Grid.Column="0" Padding="3 1" SelectionBrush="{StaticResource GoldBrush}"
+                                               Foreground="{TemplateBinding Foreground}" VerticalContentAlignment="Center">
+                                <DatePickerTextBox.Template>
+                                    <ControlTemplate TargetType="DatePickerTextBox">
+                                        <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
+                                                      VerticalAlignment="Center"/>
+                                    </ControlTemplate>
+                                </DatePickerTextBox.Template>
+                            </DatePickerTextBox>
+                            <Button x:Name="PART_Button" Grid.Column="1" Style="{StaticResource HeaderButton}"
+                                    Foreground="{StaticResource CaptionBrush}" Margin="0 0 2 0" Content="📅"/>
+                            <Popup x:Name="PART_Popup" PlacementTarget="{Binding ElementName=PART_TextBox}"
+                                   Placement="Bottom" StaysOpen="False" AllowsTransparency="True"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BaseDataGridColumnHeader" TargetType="DataGridColumnHeader">
+        <Setter Property="Foreground" Value="{StaticResource GoldBrush}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridColumnHeader">
+                    <Border Background="{StaticResource HeaderBrush}" BorderBrush="{StaticResource GoldBrush}"
+                            BorderThickness="0 0 1 1" Padding="6 3">
+                        <DockPanel>
+                            <TextBlock x:Name="SortArrow" DockPanel.Dock="Right" Margin="4 0 0 0" FontSize="9"
+                                       FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Visibility="Collapsed"/>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </DockPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="SortDirection" Value="Ascending">
+                            <Setter TargetName="SortArrow" Property="Text" Value="▲"/>
+                            <Setter TargetName="SortArrow" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="SortDirection" Value="Descending">
+                            <Setter TargetName="SortArrow" Property="Text" Value="▼"/>
+                            <Setter TargetName="SortArrow" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BaseDataGridCell" TargetType="DataGridCell">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Padding" Value="6 3"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridCell">
+                    <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                        <ContentPresenter VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BaseDataGridRow" TargetType="DataGridRow">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#1AD4AF5A"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource RowSelectionBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BaseDataGrid" TargetType="DataGrid">
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
+        <Setter Property="Background" Value="#80FBF4E2"/>
+        <Setter Property="BorderBrush" Value="{StaticResource InputBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="RowBackground" Value="Transparent"/>
+        <Setter Property="AlternatingRowBackground" Value="#148A6428"/>
+        <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="#308A6428"/>
+        <Setter Property="HeadersVisibility" Value="Column"/>
+        <Setter Property="AutoGenerateColumns" Value="False"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="CanUserAddRows" Value="False"/>
+        <Setter Property="CanUserDeleteRows" Value="False"/>
+        <Setter Property="CanUserResizeRows" Value="False"/>
+        <Setter Property="CanUserReorderColumns" Value="False"/>
+        <Setter Property="SelectionMode" Value="Single"/>
+        <Setter Property="SelectionUnit" Value="FullRow"/>
+        <Setter Property="ColumnHeaderStyle" Value="{StaticResource BaseDataGridColumnHeader}"/>
+        <Setter Property="CellStyle" Value="{StaticResource BaseDataGridCell}"/>
+        <Setter Property="RowStyle" Value="{StaticResource BaseDataGridRow}"/>
+    </Style>
+
     <Style TargetType="controls:BaseWindow">
+        <Setter Property="Language" Value="ru-RU"/>
         <Setter Property="WindowStyle" Value="None"/>
         <Setter Property="AllowsTransparency" Value="True"/>
         <Setter Property="Background" Value="Transparent"/>
